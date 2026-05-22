@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useCases } from './marketing-data'
+import TiltCard from './TiltCard'
 
 const accentMap = {
   mint:   { color: 'oklch(82% 0.18 165)', bg: 'oklch(82% 0.18 165 / 0.08)', border: 'oklch(82% 0.18 165 / 0.2)' },
@@ -72,39 +73,42 @@ export default function UseCasesSection() {
           {useCases.map((uc, i) => {
             const accent = accentMap[uc.accent]
             return (
-              <motion.article
+              <motion.div
                 key={uc.id}
                 role="listitem"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: (i % 4) * 0.07 }}
-                className="group p-5 rounded-2xl border flex flex-col gap-3 transition-all hover:scale-[1.01]"
-                style={{
-                  background: 'rgba(12,14,20,0.6)',
-                  borderColor: 'rgba(255,255,255,0.07)',
-                  backdropFilter: 'blur(12px)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = accent.border
-                  e.currentTarget.style.background = accent.bg
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
-                  e.currentTarget.style.background = 'rgba(12,14,20,0.6)'
-                }}
               >
-                {/* Mini branching preview */}
-                <MiniBranchPreview choices={uc.choices} accent={accent.color} />
+                <TiltCard
+                  maxTilt={6}
+                  className="relative p-5 rounded-2xl border flex flex-col gap-3 h-full cursor-default"
+                  style={{
+                    background: 'rgba(12,14,20,0.6)',
+                    borderColor: accent.border,
+                    backdropFilter: 'blur(12px)',
+                  }}
+                >
+                  {/* Accent glow in corner */}
+                  <div
+                    className="absolute -top-6 -right-6 w-20 h-20 rounded-full blur-2xl pointer-events-none"
+                    style={{ background: accent.color, opacity: 0.12 }}
+                    aria-hidden="true"
+                  />
 
-                {/* Content */}
-                <div>
-                  <h3 className="text-sm font-semibold mb-1">{uc.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--fg-3)' }}>
-                    {uc.description}
-                  </p>
-                </div>
-              </motion.article>
+                  {/* Mini branching preview */}
+                  <MiniBranchPreview choices={uc.choices} accent={accent.color} />
+
+                  {/* Content */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-1">{uc.title}</h3>
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--fg-3)' }}>
+                      {uc.description}
+                    </p>
+                  </div>
+                </TiltCard>
+              </motion.div>
             )
           })}
         </div>

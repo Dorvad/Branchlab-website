@@ -1,7 +1,8 @@
 'use client'
 
+import { useRef } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Play } from 'lucide-react'
 import { featurePills, APP_URL } from './marketing-data'
 
@@ -15,8 +16,20 @@ const fadeUp = {
 }
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', '75% start'],
+  })
+
+  const heroRotateX = useTransform(scrollYProgress, [0, 1], [7, 0])
+  const heroRotateY = useTransform(scrollYProgress, [0, 1], [-4, 0])
+
   return (
     <section
+      ref={sectionRef}
       id="product"
       className="relative min-h-screen flex flex-col justify-center overflow-hidden"
       aria-labelledby="hero-headline"
@@ -156,15 +169,24 @@ export default function HeroSection() {
         </div>
 
         {/* Right — animated graph visual */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        <div
           className="hidden lg:block"
+          style={{ perspective: '1000px' }}
           aria-hidden="true"
         >
-          <BranchingHeroVisual />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            style={prefersReducedMotion ? {} : {
+              rotateX: heroRotateX,
+              rotateY: heroRotateY,
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <BranchingHeroVisual />
+          </motion.div>
+        </div>
       </div>
 
       {/* Scroll hint */}

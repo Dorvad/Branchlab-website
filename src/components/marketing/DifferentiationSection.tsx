@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { differentiators } from './marketing-data'
+import TiltCard from './TiltCard'
 
 export default function DifferentiationSection() {
   return (
@@ -232,26 +233,30 @@ export default function DifferentiationSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-                className="p-5 rounded-2xl border"
-                style={{
-                  background: 'rgba(12,14,20,0.5)',
-                  borderColor: 'rgba(255,255,255,0.07)',
-                }}
               >
-                <span
-                  className="inline-block font-mono text-[9px] tracking-widest uppercase mb-3 px-2 py-0.5 rounded-full border"
+                <TiltCard
+                  maxTilt={5}
+                  className="relative p-5 rounded-2xl border h-full cursor-default"
                   style={{
-                    color: colors[card.accent],
-                    borderColor: `${colors[card.accent]}33`,
-                    background: `${colors[card.accent]}10`,
+                    background: 'rgba(12,14,20,0.5)',
+                    borderColor: `${colors[card.accent]}22`,
                   }}
                 >
-                  vs {card.vs}
-                </span>
-                <h3 className="text-sm font-semibold mb-2">{card.label}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--fg-3)' }}>
-                  {card.desc}
-                </p>
+                  <span
+                    className="inline-block font-mono text-[9px] tracking-widest uppercase mb-3 px-2 py-0.5 rounded-full border"
+                    style={{
+                      color: colors[card.accent],
+                      borderColor: `${colors[card.accent]}33`,
+                      background: `${colors[card.accent]}10`,
+                    }}
+                  >
+                    vs {card.vs}
+                  </span>
+                  <h3 className="text-sm font-semibold mb-2">{card.label}</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--fg-3)' }}>
+                    {card.desc}
+                  </p>
+                </TiltCard>
               </motion.div>
             )
           })}

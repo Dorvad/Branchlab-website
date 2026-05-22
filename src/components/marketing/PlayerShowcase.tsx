@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { RotateCcw, Smartphone } from 'lucide-react'
 
 type PlayerStage = 'video' | 'choices' | 'feedback' | 'ending'
@@ -16,6 +16,7 @@ export default function PlayerShowcase() {
   const [stage, setStage] = useState<PlayerStage>('video')
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null)
   const [autoplay, setAutoplay] = useState(true)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     if (!autoplay) return
@@ -54,7 +55,23 @@ export default function PlayerShowcase() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         {/* Left: phone mockup */}
-        <div className="flex justify-center order-2 lg:order-1">
+        <div
+          className="flex justify-center order-2 lg:order-1"
+          style={{ perspective: '900px' }}
+        >
+          <motion.div
+            animate={prefersReducedMotion ? {} : {
+              rotateY: [-8, -13, -8],
+              rotateX: [2, 5, 2],
+              y: [0, -10, 0],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
           <div className="relative">
             {/* Phone frame */}
             <div
@@ -320,6 +337,7 @@ export default function PlayerShowcase() {
               aria-hidden="true"
             />
           </div>
+          </motion.div>
         </div>
 
         {/* Right: copy */}
