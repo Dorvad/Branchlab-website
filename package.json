@@ -1,5 +1,5 @@
 {
-  "name": "branchlab",
+  "name": "branchlab-website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ffmpeg/ffmpeg": "^0.12.15",
-    "@ffmpeg/util": "^0.12.2",
-    "@supabase/supabase-js": "^2.106.1",
-    "@xyflow/react": "^12.4.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",

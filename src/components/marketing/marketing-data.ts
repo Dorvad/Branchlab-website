@@ -7,6 +7,9 @@ import type {
   FeaturePill,
 } from './marketing-types'
 
+// Update this URL to point to the BranchLab app when it's deployed
+export const APP_URL = 'https://app.branchlab.app'
+
 export const featurePills: FeaturePill[] = [
   { id: 'editor', label: 'Visual node editor' },
   { id: 'player', label: 'Video-first player' },

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Menu, X } from 'lucide-react'
+import { APP_URL } from './marketing-data'
 
 const navLinks = [
   { label: 'Product', href: '#product' },
@@ -59,7 +60,7 @@ export default function MarketingHeader() {
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link
-            href="/auth"
+            href={`${APP_URL}/auth`}
             className="text-sm transition-colors"
             style={{ color: 'var(--fg-2)' }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--fg-0)')}
@@ -68,7 +69,7 @@ export default function MarketingHeader() {
             Sign in
           </Link>
           <Link
-            href="/auth"
+            href={`${APP_URL}/auth`}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:brightness-110"
             style={{
               background: 'var(--neon-mint)',
@@ -122,7 +123,7 @@ export default function MarketingHeader() {
               ))}
               <div className="mt-3 pt-3 border-t flex flex-col gap-2" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
                 <Link
-                  href="/auth"
+                  href={`${APP_URL}/auth`}
                   onClick={() => setMobileOpen(false)}
                   className="px-3 py-3 rounded-lg text-sm text-center transition-colors"
                   style={{ color: 'var(--fg-2)' }}
@@ -130,7 +131,7 @@ export default function MarketingHeader() {
                   Sign in
                 </Link>
                 <Link
-                  href="/auth"
+                  href={`${APP_URL}/auth`}
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium"
                   style={{

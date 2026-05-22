@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { APP_URL } from './marketing-data'
 
 const footerLinks = {
   Product: [
@@ -10,9 +11,9 @@ const footerLinks = {
     { label: 'Use cases', href: '#use-cases' },
   ],
   Resources: [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Sign in', href: '/auth' },
-    { label: 'Play a demo', href: '/play/balcony-at-the-party' },
+    { label: 'Open app', href: APP_URL },
+    { label: 'Sign in', href: `${APP_URL}/auth` },
+    { label: 'Play a demo', href: `${APP_URL}/play/balcony-at-the-party` },
   ],
   Legal: [
     { label: 'Terms of service', href: '#terms' },

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Play } from 'lucide-react'
-import { featurePills } from './marketing-data'
+import { featurePills, APP_URL } from './marketing-data'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -102,7 +102,7 @@ export default function HeroSection() {
             className="flex flex-wrap items-center gap-3"
           >
             <Link
-              href="/auth"
+              href={`${APP_URL}/auth`}
               className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all hover:brightness-110 active:scale-95"
               style={{
                 background: 'var(--neon-mint)',

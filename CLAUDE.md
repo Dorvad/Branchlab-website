@@ -1,56 +1,61 @@
-# BranchLab Project Instructions
+# BranchLab Website
 
-BranchLab is a branching-video scenario maker and player.
+This is the **marketing website** for BranchLab — a standalone Next.js project. It does not contain the BranchLab app (editor, player, dashboard, auth, Supabase).
 
-The app lets creators:
-- Create branching video scenarios
-- Upload or attach video clips
-- Build a scenario as a visual graph
-- Add choices that connect one video node to another
-- Preview the scenario
-- Validate the scenario
-- Publish it to a unique public URL
+## What this repo contains
 
-The app has two major modes:
+The public marketing site at `/`. All content lives in `src/components/marketing/`. No authentication, no database, no API routes.
 
-1. Creator Studio
-A desktop-first scenario editor with a visual node graph.
+## Tech stack
 
-2. Scenario Player
-A mobile-first public player where users play through the branching video experience.
-
-Core product model:
-- Scenario = a project
-- Node = a video scene
-- Choice = a button shown after a video
-- Edge = connection from one node to another
-- Ending node = final state
-- Published scenario = locked playable version with a public slug
-
-Development rules:
-- Build incrementally.
-- Do not overbuild.
-- Do not add Supabase until the local mock version works.
-- Do not add AI features until the core editor and player work.
-- Keep scenario logic data-driven.
-- Keep types clean and centralized.
-- Prefer simple, understandable code over clever abstractions.
-- Use TypeScript strictly.
-- Use modular components.
-- Make the app responsive, but prioritize desktop for editor and mobile for player.
-- Use beautiful, modern UI with strong spacing, hierarchy, and motion.
-- Avoid generic admin-dashboard aesthetics.
-
-Tech stack:
 - Next.js App Router
 - TypeScript
 - Tailwind CSS
-- shadcn/ui
-- @xyflow/react for the branching canvas
-- Framer Motion for transitions
-- Supabase later, not in the first local prototype
+- Framer Motion
+- Lucide React
 
-Important:
-The first version should use mock/local data only.
-The first goal is to prove:
-“I can create a branching scenario, preview it, and play it through a shareable route.”
+## App URL config
+
+CTA buttons link to the BranchLab app. Update `APP_URL` in:
+
+```
+src/components/marketing/marketing-data.ts
+```
+
+Change `https://app.branchlab.app` to the actual deployed app URL.
+
+## Development
+
+```bash
+npm install
+npm run dev     # localhost:3000
+npm run build   # production build
+```
+
+## Structure
+
+```
+src/
+  app/
+    page.tsx                    # assembles all marketing sections
+    layout.tsx                  # root layout + metadata + fonts
+    globals.css                 # design tokens + marketing animations
+  components/
+    marketing/
+      marketing-types.ts        # TypeScript interfaces
+      marketing-data.ts         # all data arrays + APP_URL config
+      MarketingHeader.tsx       # sticky nav
+      HeroSection.tsx           # hero + animated graph visual
+      ProblemSection.tsx        # linear vs. branching split
+      ProductLoopSection.tsx    # 6-step product flow
+      CreatorStudioShowcase.tsx # editor mockup with interactive stages
+      PlayerShowcase.tsx        # phone player mockup with animation states
+      UseCasesSection.tsx       # use cases grid
+      ValidationSection.tsx     # validation → publish sequence
+      DifferentiationSection.tsx# positioning constellation
+      FutureSection.tsx         # roadmap
+      CTASection.tsx            # final CTA
+      Footer.tsx                # footer
+public/
+  branchlab-logo.png            # logo asset (replaceable)
+```
