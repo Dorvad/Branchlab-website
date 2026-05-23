@@ -1,14 +1,9 @@
 import type { Metadata } from 'next'
 import MarketingHeader from '@/components/marketing/MarketingHeader'
 import HeroSection from '@/components/marketing/HeroSection'
-import ProblemSection from '@/components/marketing/ProblemSection'
-import ProductLoopSection from '@/components/marketing/ProductLoopSection'
-import CreatorStudioShowcase from '@/components/marketing/CreatorStudioShowcase'
+import CanvasSection from '@/components/marketing/CanvasSection'
 import PlayerShowcase from '@/components/marketing/PlayerShowcase'
 import UseCasesSection from '@/components/marketing/UseCasesSection'
-import ValidationSection from '@/components/marketing/ValidationSection'
-import DifferentiationSection from '@/components/marketing/DifferentiationSection'
-import FutureSection from '@/components/marketing/FutureSection'
 import CTASection from '@/components/marketing/CTASection'
 import Footer from '@/components/marketing/Footer'
 
@@ -39,14 +34,9 @@ export default function MarketingPage() {
       <MarketingHeader />
       <main>
         <HeroSection />
-        <ProblemSection />
-        <ProductLoopSection />
-        <CreatorStudioShowcase />
+        <CanvasSection />
         <PlayerShowcase />
         <UseCasesSection />
-        <ValidationSection />
-        <DifferentiationSection />
-        <FutureSection />
         <CTASection />
       </main>
       <Footer />
