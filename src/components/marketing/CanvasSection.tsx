@@ -9,24 +9,45 @@ const features = [
   { icon: CheckCircle2, label: 'Built-in validation', desc: 'Catch dead ends and broken links before you publish.' },
 ]
 
-// Node descriptors for the scenario graph
-const NODES = [
-  { id: 'start',    x: 170, y: 12,  grad: 'vt-blue',  title: 'Opening',       choices: ['Speak up', 'Hold back'],          highlighted: false, isStart: true },
-  { id: 'speakup',  x: 50,  y: 130, grad: 'vt-mint',  title: 'Speak Up',      choices: ['Direct ask', 'Gentle push'],      highlighted: true,  isStart: false },
-  { id: 'holdback', x: 290, y: 130, grad: 'vt-warm',  title: 'Hold Back',     choices: ['Wait for prompt', 'Exit quietly'],highlighted: false, isStart: false },
-  { id: 'direct',   x: 0,   y: 260, grad: 'vt-mint',  title: 'Direct Ask',    choices: ['Outcome A'],                      highlighted: false, isStart: false },
-  { id: 'gentle',   x: 110, y: 260, grad: 'vt-blue',  title: 'Gentle Push',   choices: ['Outcome B'],                      highlighted: false, isStart: false },
-  { id: 'wait',     x: 250, y: 260, grad: 'vt-blue',  title: 'Wait…',         choices: ['Coaching'],                       highlighted: false, isStart: false },
-  { id: 'exit',     x: 360, y: 260, grad: 'vt-warm',  title: 'Exit Quietly',  choices: ['Outcome C'],                      highlighted: false, isStart: false },
-  { id: 'coaching', x: 220, y: 370, grad: 'vt-violet', title: 'Coaching',     choices: [],                                 highlighted: false, isStart: false },
-  { id: 'outA',     x: 30,  y: 380, grad: 'vt-amber', title: 'Outcome A',     choices: [],                                 highlighted: false, isStart: false },
-  { id: 'outB',     x: 140, y: 380, grad: 'vt-amber', title: 'Outcome B',     choices: [],                                 highlighted: false, isStart: false },
-  { id: 'outC',     x: 360, y: 380, grad: 'vt-amber', title: 'Outcome C',     choices: [],                                 highlighted: false, isStart: false },
-]
-
-// Edges: [fromNodeCenterX, fromNodeCenterY, toNodeCenterX, toNodeCenterY]
+// Layout constants
 const NODE_W = 110
 const NODE_H = 70
+const VGAP   = 48
+
+// Row y positions (4 rows)
+const Y0 = 10
+const Y1 = Y0 + NODE_H + VGAP   // 128
+const Y2 = Y1 + NODE_H + VGAP   // 246
+const Y3 = Y2 + NODE_H + VGAP   // 364
+
+// Row 2: 4 nodes with 16px gap
+const R2_STEP = NODE_W + 16      // 126
+const R2_LEFT = 26
+const X2 = [R2_LEFT, R2_LEFT + R2_STEP, R2_LEFT + 2 * R2_STEP, R2_LEFT + 3 * R2_STEP]
+// X2 = [26, 152, 278, 404]
+
+// Row 1: each node centered between its two children
+const X1 = [(X2[0] + X2[1]) / 2, (X2[2] + X2[3]) / 2]
+// X1 = [89, 341]
+
+// Row 0: centered between row-1 nodes
+const X0 = (X1[0] + X1[1]) / 2
+// X0 = 215
+
+// Node descriptors for the scenario graph
+const NODES = [
+  { id: 'start',    x: X0,    y: Y0, grad: 'vt-blue',   title: 'Opening',      highlighted: false, isStart: true  },
+  { id: 'speakup',  x: X1[0], y: Y1, grad: 'vt-mint',   title: 'Speak Up',     highlighted: true,  isStart: false },
+  { id: 'holdback', x: X1[1], y: Y1, grad: 'vt-warm',   title: 'Hold Back',    highlighted: false, isStart: false },
+  { id: 'direct',   x: X2[0], y: Y2, grad: 'vt-mint',   title: 'Direct Ask',   highlighted: false, isStart: false },
+  { id: 'gentle',   x: X2[1], y: Y2, grad: 'vt-blue',   title: 'Gentle Push',  highlighted: false, isStart: false },
+  { id: 'wait',     x: X2[2], y: Y2, grad: 'vt-blue',   title: 'Wait…',        highlighted: false, isStart: false },
+  { id: 'exit',     x: X2[3], y: Y2, grad: 'vt-warm',   title: 'Exit Quietly', highlighted: false, isStart: false },
+  { id: 'outA',     x: X2[0], y: Y3, grad: 'vt-amber',  title: 'Outcome A',    highlighted: false, isStart: false },
+  { id: 'outB',     x: X2[1], y: Y3, grad: 'vt-amber',  title: 'Outcome B',    highlighted: false, isStart: false },
+  { id: 'coaching', x: X2[2], y: Y3, grad: 'vt-violet', title: 'Coaching',     highlighted: false, isStart: false },
+  { id: 'outC',     x: X2[3], y: Y3, grad: 'vt-amber',  title: 'Outcome C',    highlighted: false, isStart: false },
+]
 
 function nodeCenter(id: string): [number, number] {
   const n = NODES.find(n => n.id === id)!
@@ -34,16 +55,16 @@ function nodeCenter(id: string): [number, number] {
 }
 
 const EDGES: Array<[string, string, boolean]> = [
-  ['start', 'speakup', false],
-  ['start', 'holdback', false],
-  ['speakup', 'direct', true],
-  ['speakup', 'gentle', false],
-  ['holdback', 'wait', false],
-  ['holdback', 'exit', false],
-  ['direct', 'outA', false],
-  ['gentle', 'outB', false],
-  ['wait', 'coaching', false],
-  ['exit', 'outC', false],
+  ['start',    'speakup',  true],
+  ['start',    'holdback', false],
+  ['speakup',  'direct',   false],
+  ['speakup',  'gentle',   false],
+  ['holdback', 'wait',     false],
+  ['holdback', 'exit',     false],
+  ['direct',   'outA',     false],
+  ['gentle',   'outB',     false],
+  ['wait',     'coaching', false],
+  ['exit',     'outC',     false],
 ]
 
 function SceneNode({
@@ -96,9 +117,8 @@ function SceneNode({
 function ScenarioGraph() {
   return (
     <svg
-      viewBox="0 0 480 465"
+      viewBox="0 0 540 450"
       className="w-full h-full"
-      style={{ overflow: 'visible' }}
     >
       <defs>
         {/* Gradient fills */}
@@ -160,63 +180,44 @@ function ScenarioGraph() {
         )
       })}
 
-      {/* Animated particle on highlighted edge */}
-      {(() => {
-        const [x1, y1] = nodeCenter('start')
-        const [x2, y2] = nodeCenter('speakup')
+      {/* Animated particles on highlighted edges */}
+      {[
+        { from: 'start',   to: 'speakup', dur: '2.4s', r: 3,   begin: '0s'   },
+        { from: 'speakup', to: 'direct',  dur: '2.6s', r: 2.5, begin: '1.2s' },
+      ].map(({ from, to, dur, r, begin }) => {
+        const [x1, y1] = nodeCenter(from)
+        const [x2, y2] = nodeCenter(to)
         const midY = (y1 + y2) / 2
         return (
-          <circle r={3} fill="url(#particle-mint)">
+          <circle key={`${from}-${to}`} r={r} fill="url(#particle-mint)">
             <animateMotion
-              dur="2.4s"
+              dur={dur}
               repeatCount="indefinite"
+              begin={begin}
               path={`M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`}
             />
           </circle>
         )
-      })()}
-      {(() => {
-        const [x1, y1] = nodeCenter('speakup')
-        const [x2, y2] = nodeCenter('direct')
-        const midY = (y1 + y2) / 2
-        return (
-          <circle r={2.5} fill="url(#particle-mint)" opacity={0.7}>
-            <animateMotion
-              dur="2.8s"
-              repeatCount="indefinite"
-              begin="1.2s"
-              path={`M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`}
-            />
-          </circle>
-        )
-      })()}
+      })}
 
       {/* Nodes */}
       {NODES.map(n => (
         <SceneNode key={n.id} {...n} />
       ))}
 
-      {/* Cursor dot to imply interactivity */}
-      <motion.g
-        animate={{ x: [0, 26, 26, 0, 0], y: [0, 0, 20, 20, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ originX: 0, originY: 0 }}
-      >
-        <circle
-          cx={nodeCenter('speakup')[0] + 52}
-          cy={nodeCenter('speakup')[1] - 18}
-          r={5}
-          fill="white"
-          opacity={0.9}
-        />
-        <circle
-          cx={nodeCenter('speakup')[0] + 52}
-          cy={nodeCenter('speakup')[1] - 18}
-          r={10}
-          fill="white"
-          opacity={0.12}
-        />
-      </motion.g>
+      {/* Cursor dot floating near the highlighted node */}
+      {(() => {
+        const [cx, cy] = nodeCenter('speakup')
+        return (
+          <motion.g
+            animate={{ x: [0, 18, 18, 0, 0], y: [0, 0, 14, 14, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <circle cx={cx + 48} cy={cy - 14} r={5}  fill="white" opacity={0.9} />
+            <circle cx={cx + 48} cy={cy - 14} r={10} fill="white" opacity={0.12} />
+          </motion.g>
+        )
+      })()}
     </svg>
   )
 }
