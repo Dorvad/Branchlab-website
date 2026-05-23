@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Anti-flash: set theme before first paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('branchlab-theme')||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t)})()`,
+            __html: `(function(){var t=localStorage.getItem('branchlab-theme')||'dark';document.documentElement.setAttribute('data-theme',t)})()`,
           }}
         />
       </head>

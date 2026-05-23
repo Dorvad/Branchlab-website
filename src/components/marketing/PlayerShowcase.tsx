@@ -154,6 +154,7 @@ export default function PlayerShowcase() {
 
 // ── Phone mockup ──────────────────────────────────────────────────────────
 function PhoneFrame({ pref }: { pref: boolean }) {
+  const [activated, setActivated] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
   return (
@@ -189,12 +190,7 @@ function PhoneFrame({ pref }: { pref: boolean }) {
             {/* Dynamic island */}
             <div
               className="absolute top-3 left-1/2 -translate-x-1/2 z-20"
-              style={{
-                width: 90,
-                height: 26,
-                borderRadius: 20,
-                background: '#08090d',
-              }}
+              style={{ width: 90, height: 26, borderRadius: 20, background: '#08090d' }}
               aria-hidden="true"
             />
 
@@ -203,8 +199,36 @@ function PhoneFrame({ pref }: { pref: boolean }) {
             <div className="absolute left-0 top-16 w-[2px] h-10 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
             <div className="absolute left-0 top-28 w-[2px] h-10 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
 
-            {/* Loading state */}
-            {!loaded && (
+            {/* Click-to-activate placeholder */}
+            {!activated && (
+              <button
+                onClick={() => setActivated(true)}
+                className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 w-full border-0"
+                style={{ background: '#08090d', cursor: 'pointer' }}
+                aria-label="Launch interactive demo"
+              >
+                <motion.div
+                  className="w-14 h-14 rounded-full flex items-center justify-center"
+                  style={{
+                    background: 'oklch(82% 0.18 165 / 0.12)',
+                    border: '1.5px solid oklch(82% 0.18 165 / 0.4)',
+                    boxShadow: '0 0 28px oklch(82% 0.18 165 / 0.18)',
+                  }}
+                  whileHover={{ scale: 1.08, boxShadow: '0 0 40px oklch(82% 0.18 165 / 0.35)' }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <polygon points="7,4 17,10 7,16" fill="oklch(82% 0.18 165)" />
+                  </svg>
+                </motion.div>
+                <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--fg-3)' }}>
+                  Try it
+                </span>
+              </button>
+            )}
+
+            {/* Loading spinner — visible after click until iframe loads */}
+            {activated && !loaded && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3"
                 style={{ background: '#08090d' }}>
                 <motion.div
@@ -219,15 +243,17 @@ function PhoneFrame({ pref }: { pref: boolean }) {
               </div>
             )}
 
-            {/* Live iframe */}
-            <iframe
-              src={PLAYER_URL}
-              onLoad={() => setLoaded(true)}
-              className="absolute inset-0 w-full h-full border-0"
-              allow="autoplay; fullscreen"
-              title="BranchLab scenario player — mobile view"
-              style={{ borderRadius: 'inherit' }}
-            />
+            {/* Live iframe — only mounted after user activates */}
+            {activated && (
+              <iframe
+                src={PLAYER_URL}
+                onLoad={() => setLoaded(true)}
+                className="absolute inset-0 w-full h-full border-0"
+                allow="fullscreen"
+                title="BranchLab scenario player — mobile view"
+                style={{ borderRadius: 'inherit' }}
+              />
+            )}
           </div>
 
           {/* Glow */}
@@ -244,6 +270,7 @@ function PhoneFrame({ pref }: { pref: boolean }) {
 
 // ── Desktop mockup ────────────────────────────────────────────────────────
 function DesktopFrame({ pref }: { pref: boolean }) {
+  const [activated, setActivated] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
   return (
@@ -301,7 +328,6 @@ function DesktopFrame({ pref }: { pref: boolean }) {
                 className="flex flex-1 items-center gap-1.5 px-3 py-1 rounded-md min-w-0"
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)' }}
               >
-                {/* Lock icon */}
                 <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true">
                   <rect x="1.5" y="4" width="6" height="4.5" rx="1" stroke="rgba(255,255,255,0.3)" strokeWidth="0.9" />
                   <path d="M3 4V3a1.5 1.5 0 013 0v1" stroke="rgba(255,255,255,0.3)" strokeWidth="0.9" />
@@ -314,8 +340,36 @@ function DesktopFrame({ pref }: { pref: boolean }) {
 
             {/* Content area */}
             <div className="relative" style={{ height: 360 }}>
-              {/* Loading state */}
-              {!loaded && (
+              {/* Click-to-activate placeholder */}
+              {!activated && (
+                <button
+                  onClick={() => setActivated(true)}
+                  className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 w-full border-0"
+                  style={{ background: '#08090d', cursor: 'pointer' }}
+                  aria-label="Launch interactive demo"
+                >
+                  <motion.div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{
+                      background: 'oklch(82% 0.18 165 / 0.12)',
+                      border: '1.5px solid oklch(82% 0.18 165 / 0.4)',
+                      boxShadow: '0 0 28px oklch(82% 0.18 165 / 0.18)',
+                    }}
+                    whileHover={{ scale: 1.08, boxShadow: '0 0 40px oklch(82% 0.18 165 / 0.35)' }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <polygon points="7,4 17,10 7,16" fill="oklch(82% 0.18 165)" />
+                    </svg>
+                  </motion.div>
+                  <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--fg-3)' }}>
+                    Try it
+                  </span>
+                </button>
+              )}
+
+              {/* Loading spinner — visible after click until iframe loads */}
+              {activated && !loaded && (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3"
                   style={{ background: '#08090d' }}>
                   <motion.div
@@ -330,14 +384,16 @@ function DesktopFrame({ pref }: { pref: boolean }) {
                 </div>
               )}
 
-              {/* Live iframe */}
-              <iframe
-                src={PLAYER_URL}
-                onLoad={() => setLoaded(true)}
-                className="absolute inset-0 w-full h-full border-0"
-                allow="autoplay; fullscreen"
-                title="BranchLab scenario player — desktop view"
-              />
+              {/* Live iframe — only mounted after user activates */}
+              {activated && (
+                <iframe
+                  src={PLAYER_URL}
+                  onLoad={() => setLoaded(true)}
+                  className="absolute inset-0 w-full h-full border-0"
+                  allow="fullscreen"
+                  title="BranchLab scenario player — desktop view"
+                />
+              )}
             </div>
           </div>
 
