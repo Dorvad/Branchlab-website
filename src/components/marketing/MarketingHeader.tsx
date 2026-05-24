@@ -69,7 +69,7 @@ export default function MarketingHeader() {
             Sign in
           </Link>
           <Link
-            href={`${APP_URL}/auth`}
+            href="https://www.branchlab.online"
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:brightness-110"
             style={{
               background: 'var(--neon-mint)',
@@ -131,7 +131,7 @@ export default function MarketingHeader() {
                   Sign in
                 </Link>
                 <Link
-                  href={`${APP_URL}/auth`}
+                  href="https://www.branchlab.online"
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium"
                   style={{
