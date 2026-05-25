@@ -211,18 +211,28 @@ export default function HeroSection() {
   )
 }
 
+// ── Floating 3D branching visual ─────────────────────────────────────────
+//
+// Node positions (within 480×380 canvas):
+//   START pill  : left=165, top=22,  w=150, h=44  → bottom-center (240, 66)
+//   SCENE A card: left=14,  top=130, w=136, h=70  → center-x 82, bottom 200
+//   SCENE B card: left=330, top=130, w=136, h=70  → center-x 398, bottom 200
+//   END A badge : left=0,   top=272, w=110, h=36  → center-x 55
+//   END B badge : left=160, top=268, w=160, h=42  → center-x 240  (highlighted)
+//   END C badge : left=360, top=272, w=110, h=36  → center-x 415
+
 function BranchingHeroVisual() {
   return (
     <div
-      className="relative rounded-2xl border overflow-hidden"
+      className="relative rounded-2xl border"
       style={{
-        background: 'rgba(12,14,20,0.8)',
-        borderColor: 'rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(20px)',
-        boxShadow: '0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
+        background: 'rgb(10,11,17)',
+        borderColor: 'rgba(255,255,255,0.09)',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)',
+        transformStyle: 'preserve-3d',
       }}
     >
-      {/* Top bar */}
+      {/* App bar */}
       <div
         className="flex items-center justify-between px-4 py-3 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}
@@ -231,298 +241,169 @@ function BranchingHeroVisual() {
           <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }} />
           <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }} />
           <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }} />
+          <span className="font-mono text-[10px] tracking-widest uppercase ml-1.5" style={{ color: 'var(--fg-4)' }}>
+            Creator Studio
+          </span>
         </div>
-        <span
-          className="font-mono text-[10px] tracking-widest uppercase"
-          style={{ color: 'var(--fg-4)' }}
-        >
-          SCENARIO · tough-talk-x7
-        </span>
         <StatusPill label="PUBLISHED" accent="mint" />
       </div>
 
-      {/* Graph */}
-      <div className="p-4 mkt-dot-grid" style={{ minHeight: 440 }}>
+      {/* Canvas */}
+      <div
+        className="relative"
+        style={{
+          height: 380,
+          background: 'rgba(8,9,14,0.5)',
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        {/* Dot grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+
+        {/* SVG connection edges — flat 2D overlay */}
         <svg
-          viewBox="0 0 480 420"
-          className="w-full"
-          style={{ maxHeight: 420 }}
-          role="img"
-          aria-label="Branching scenario graph showing nodes and connections"
+          className="absolute inset-0"
+          viewBox="0 0 480 380"
+          style={{ width: '100%', height: '100%' }}
+          aria-hidden="true"
         >
           <defs>
-            <marker
-              id="arrowhead"
-              viewBox="0 0 10 10"
-              refX="8"
-              refY="5"
-              markerWidth="4"
-              markerHeight="4"
-              orient="auto"
-            >
-              <path d="M0,1 L9,5 L0,9 Z" fill="rgba(255,255,255,0.25)" />
+            <marker id="h-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+              <path d="M0,1 L9,5 L0,9 Z" fill="rgba(255,255,255,0.22)" />
             </marker>
-            <marker
-              id="arrowhead-mint"
-              viewBox="0 0 10 10"
-              refX="8"
-              refY="5"
-              markerWidth="4"
-              markerHeight="4"
-              orient="auto"
-            >
-              <path d="M0,1 L9,5 L0,9 Z" fill="oklch(82% 0.18 165 / 0.8)" />
+            <marker id="h-arrow-mint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+              <path d="M0,1 L9,5 L0,9 Z" fill="oklch(82% 0.18 165 / 0.85)" />
             </marker>
-            <filter id="glow-mint">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
+            <filter id="h-glow-mint" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
-            <filter id="glow-violet">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+            <radialGradient id="h-pg-mint">
+              <stop offset="0%" stopColor="oklch(82% 0.18 165)" stopOpacity="1" />
+              <stop offset="100%" stopColor="oklch(82% 0.18 165)" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="h-pg-blue">
+              <stop offset="0%" stopColor="oklch(70% 0.18 240)" stopOpacity="1" />
+              <stop offset="100%" stopColor="oklch(70% 0.18 240)" stopOpacity="0" />
+            </radialGradient>
           </defs>
 
-          {/* === EDGES === */}
           {/* START → SCENE A */}
-          <path
-            d="M240,68 C240,110 140,110 140,148"
-            stroke="rgba(255,255,255,0.12)"
-            strokeWidth="1.5"
-            fill="none"
-            markerEnd="url(#arrowhead)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '0.2s' }}
-          />
+          <path d="M 240 66 C 240 100 82 100 82 130" stroke="rgba(255,255,255,0.15)" strokeWidth="1.4" fill="none" markerEnd="url(#h-arrow)" />
           {/* START → SCENE B */}
-          <path
-            d="M240,68 C240,110 340,110 340,148"
-            stroke="rgba(255,255,255,0.12)"
-            strokeWidth="1.5"
-            fill="none"
-            markerEnd="url(#arrowhead)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '0.4s' }}
-          />
-          {/* SCENE A → FEEDBACK */}
-          <path
-            d="M140,212 C140,248 80,248 80,280"
-            stroke="oklch(78% 0.18 285 / 0.5)"
-            strokeWidth="1.5"
-            fill="none"
-            strokeDasharray="5 4"
-            markerEnd="url(#arrowhead)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '0.7s' }}
-          />
-          {/* SCENE A → ENDING A */}
-          <path
-            d="M140,212 C140,248 200,248 200,280"
-            stroke="rgba(255,255,255,0.12)"
-            strokeWidth="1.5"
-            fill="none"
-            markerEnd="url(#arrowhead)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '0.9s' }}
-          />
-          {/* SCENE B → SCENE C */}
-          <path
-            d="M340,212 C340,248 340,248 340,280"
-            stroke="rgba(255,255,255,0.12)"
-            strokeWidth="1.5"
-            fill="none"
-            markerEnd="url(#arrowhead)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '1.0s' }}
-          />
-          {/* FEEDBACK → END B */}
-          <path
-            d="M80,344 C80,370 160,370 200,370"
-            stroke="oklch(78% 0.18 285 / 0.4)"
-            strokeWidth="1.5"
-            fill="none"
-            strokeDasharray="5 4"
-            markerEnd="url(#arrowhead)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '1.1s' }}
-          />
-          {/* SCENE C → END B */}
-          <path
-            d="M340,344 C340,370 280,370 250,370"
-            stroke="oklch(82% 0.18 165 / 0.6)"
-            strokeWidth="1.8"
-            fill="none"
-            markerEnd="url(#arrowhead-mint)"
-            filter="url(#glow-mint)"
-            className="mkt-animate-edge"
-            style={{ animationDelay: '1.2s' }}
-          />
+          <path d="M 240 66 C 240 100 398 100 398 130" stroke="rgba(255,255,255,0.15)" strokeWidth="1.4" fill="none" markerEnd="url(#h-arrow)" />
+          {/* SCENE A → END A */}
+          <path d="M 82 200 C 82 240 55 240 55 272" stroke="rgba(255,255,255,0.09)" strokeWidth="1.2" fill="none" strokeDasharray="4 3" />
+          {/* SCENE A → END B — highlighted */}
+          <path d="M 82 200 C 82 258 240 258 240 268" stroke="oklch(82% 0.18 165 / 0.7)" strokeWidth="1.8" fill="none" filter="url(#h-glow-mint)" markerEnd="url(#h-arrow-mint)" />
+          {/* SCENE B → END C */}
+          <path d="M 398 200 C 398 240 415 240 415 272" stroke="rgba(255,255,255,0.09)" strokeWidth="1.2" fill="none" strokeDasharray="4 3" />
 
-          {/* Moving particle on mint edge */}
-          <circle r="2.5" fill="oklch(82% 0.18 165)" opacity="0.9">
-            <animateMotion
-              dur="2.5s"
-              repeatCount="indefinite"
-              begin="1.5s"
-              path="M340,344 C340,370 280,370 250,370"
-            />
+          {/* Particles */}
+          <circle r="3" fill="url(#h-pg-mint)">
+            <animateMotion dur="2.2s" repeatCount="indefinite" path="M 240 66 C 240 100 82 100 82 130" />
           </circle>
-          <circle r="1.5" fill="oklch(78% 0.18 285)" opacity="0.7">
-            <animateMotion
-              dur="3s"
-              repeatCount="indefinite"
-              begin="0.8s"
-              path="M140,212 C140,248 80,248 80,280"
-            />
+          <circle r="2.5" fill="url(#h-pg-mint)" opacity="0.85">
+            <animateMotion dur="2.5s" repeatCount="indefinite" begin="1.1s" path="M 82 200 C 82 258 240 258 240 268" />
           </circle>
-
-          {/* === NODES === */}
-
-          {/* START node */}
-          <g className="mkt-glow-mint">
-            <rect
-              x="190" y="30" width="100" height="38"
-              rx="8"
-              fill="oklch(82% 0.18 165 / 0.15)"
-              stroke="oklch(82% 0.18 165 / 0.7)"
-              strokeWidth="1.5"
-            />
-            <text
-              x="240" y="54"
-              textAnchor="middle"
-              fill="oklch(82% 0.18 165)"
-              fontFamily="monospace"
-              fontSize="11"
-              letterSpacing="2"
-              fontWeight="600"
-            >
-              START
-            </text>
-          </g>
-
-          {/* SCENE A (selected/highlighted) */}
-          <g>
-            <rect
-              x="90" y="148" width="100" height="64"
-              rx="10"
-              fill="oklch(82% 0.18 165 / 0.08)"
-              stroke="oklch(82% 0.18 165 / 0.55)"
-              strokeWidth="1.5"
-            />
-            <rect
-              x="96" y="154" width="88" height="28"
-              rx="5"
-              fill="rgba(255,255,255,0.05)"
-            />
-            <text x="140" y="168" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="7" letterSpacing="1">
-              VIDEO SCENE
-            </text>
-            <text x="140" y="195" textAnchor="middle" fill="var(--fg-1)" fontSize="11" fontWeight="600">The Approach</text>
-            <text x="140" y="207" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="8">2 CHOICES</text>
-          </g>
-
-          {/* SCENE B */}
-          <g>
-            <rect
-              x="290" y="148" width="100" height="64"
-              rx="10"
-              fill="rgba(255,255,255,0.03)"
-              stroke="rgba(255,255,255,0.12)"
-              strokeWidth="1"
-            />
-            <rect
-              x="296" y="154" width="88" height="28"
-              rx="5"
-              fill="rgba(255,255,255,0.04)"
-            />
-            <text x="340" y="168" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="7" letterSpacing="1">
-              VIDEO SCENE
-            </text>
-            <text x="340" y="195" textAnchor="middle" fill="var(--fg-1)" fontSize="11" fontWeight="600">The Wait</text>
-            <text x="340" y="207" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="8">1 CHOICE</text>
-          </g>
-
-          {/* FEEDBACK node */}
-          <g className="mkt-glow-violet">
-            <rect
-              x="30" y="280" width="100" height="64"
-              rx="10"
-              fill="oklch(78% 0.18 285 / 0.10)"
-              stroke="oklch(78% 0.18 285 / 0.5)"
-              strokeWidth="1.3"
-              strokeDasharray="5 3"
-            />
-            <text x="80" y="305" textAnchor="middle" fill="oklch(78% 0.18 285)" fontFamily="monospace" fontSize="8" letterSpacing="1">
-              FEEDBACK
-            </text>
-            <text x="80" y="323" textAnchor="middle" fill="var(--fg-1)" fontSize="11" fontWeight="600">Good effort</text>
-            <text x="80" y="336" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="8">COACHING</text>
-          </g>
-
-          {/* SCENE C */}
-          <g>
-            <rect
-              x="290" y="280" width="100" height="64"
-              rx="10"
-              fill="rgba(255,255,255,0.03)"
-              stroke="rgba(255,255,255,0.12)"
-              strokeWidth="1"
-            />
-            <rect
-              x="296" y="286" width="88" height="28"
-              rx="5"
-              fill="rgba(255,255,255,0.04)"
-            />
-            <text x="340" y="300" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="7" letterSpacing="1">
-              VIDEO SCENE
-            </text>
-            <text x="340" y="327" textAnchor="middle" fill="var(--fg-1)" fontSize="11" fontWeight="600">The Outcome</text>
-            <text x="340" y="339" textAnchor="middle" fill="var(--fg-3)" fontFamily="monospace" fontSize="8">1 CHOICE</text>
-          </g>
-
-          {/* ENDING A */}
-          <g>
-            <rect
-              x="150" y="280" width="100" height="42"
-              rx="8"
-              fill="oklch(80% 0.16 60 / 0.10)"
-              stroke="oklch(80% 0.16 60 / 0.4)"
-              strokeWidth="1.2"
-            />
-            <text x="200" y="305" textAnchor="middle" fill="oklch(80% 0.16 60)" fontFamily="monospace" fontSize="9" letterSpacing="2">
-              ENDING A
-            </text>
-          </g>
-
-          {/* ENDING B (final destination, glowing) */}
-          <g className="mkt-glow-amber">
-            <rect
-              x="160" y="352" width="120" height="42"
-              rx="8"
-              fill="oklch(80% 0.16 60 / 0.14)"
-              stroke="oklch(80% 0.16 60 / 0.65)"
-              strokeWidth="1.5"
-            />
-            <text x="220" y="377" textAnchor="middle" fill="oklch(80% 0.16 60)" fontFamily="monospace" fontSize="9" letterSpacing="2" fontWeight="600">
-              ENDING B
-            </text>
-          </g>
         </svg>
+
+        {/* === 3D FLOATING NODE CARDS === */}
+
+        {/* START pill — highest z, pulsing ring */}
+        <motion.div
+          style={{ position: 'absolute', left: 165, top: 22, translateZ: 24 }}
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <div
+            style={{
+              width: 150, height: 44, borderRadius: 22,
+              background: 'oklch(82% 0.18 165 / 0.12)',
+              border: '1.5px solid oklch(82% 0.18 165 / 0.65)',
+              boxShadow: '0 0 32px oklch(82% 0.18 165 / 0.25), 0 4px 20px rgba(0,0,0,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              position: 'relative',
+            }}
+          >
+            <motion.div
+              style={{
+                position: 'absolute', inset: -8, borderRadius: 30,
+                border: '1px solid oklch(82% 0.18 165 / 0.28)',
+              }}
+              animate={{ opacity: [0.5, 0.05, 0.5], scale: [1, 1.07, 1] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 2, color: 'oklch(82% 0.18 165)', fontWeight: 600 }}>
+              OPENING SCENE
+            </span>
+          </div>
+        </motion.div>
+
+        {/* SCENE A — left branch */}
+        <motion.div
+          style={{ position: 'absolute', left: 14, top: 130, translateZ: 4 }}
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 3.7, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+        >
+          <HeroSceneCard
+            title="The Approach"
+            grad="linear-gradient(135deg, oklch(56% 0.22 165 / 0.9), oklch(50% 0.2 200 / 0.9))"
+            choices={2}
+          />
+        </motion.div>
+
+        {/* SCENE B — right branch */}
+        <motion.div
+          style={{ position: 'absolute', left: 330, top: 130, translateZ: 0 }}
+          animate={{ y: [0, -5, 0] }}
+          transition={{ duration: 4.1, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
+        >
+          <HeroSceneCard
+            title="The Deflection"
+            grad="linear-gradient(135deg, oklch(52% 0.2 260 / 0.9), oklch(48% 0.18 285 / 0.9))"
+            choices={1}
+          />
+        </motion.div>
+
+        {/* END A — dim, left */}
+        <motion.div
+          style={{ position: 'absolute', left: 0, top: 272, translateZ: -12 }}
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        >
+          <HeroEndingBadge label="TENSION" />
+        </motion.div>
+
+        {/* END B — highlighted, pops forward */}
+        <motion.div
+          style={{ position: 'absolute', left: 160, top: 268, translateZ: 18 }}
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.1 }}
+        >
+          <HeroEndingBadge label="BREAKTHROUGH" highlighted />
+        </motion.div>
+
+        {/* END C — dim, right */}
+        <motion.div
+          style={{ position: 'absolute', left: 360, top: 272, translateZ: -12 }}
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
+        >
+          <HeroEndingBadge label="AVOIDANCE" />
+        </motion.div>
       </div>
 
-      {/* Bottom status bar */}
+      {/* Status bar */}
       <div
         className="flex items-center justify-between px-4 py-2.5 border-t"
-        style={{
-          borderColor: 'rgba(255,255,255,0.06)',
-          background: 'rgba(8,9,13,0.5)',
-        }}
+        style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(8,9,13,0.6)' }}
       >
         <div className="flex items-center gap-3">
           <StatChip label="6 scenes" />
@@ -535,11 +416,83 @@ function BranchingHeroVisual() {
   )
 }
 
+function HeroSceneCard({ title, grad, choices }: { title: string; grad: string; choices: number }) {
+  return (
+    <div
+      style={{
+        width: 136, height: 70, borderRadius: 10,
+        background: 'rgba(16,18,26,0.96)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        boxShadow: '0 10px 32px rgba(0,0,0,0.6)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* Video thumbnail */}
+      <div style={{ height: 36, background: grad, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          width: 20, height: 20, borderRadius: 10,
+          background: 'rgba(0,0,0,0.45)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="7" height="8" viewBox="0 0 7 8" aria-hidden="true">
+            <polygon points="1,0 7,4 1,8" fill="rgba(255,255,255,0.9)" />
+          </svg>
+        </div>
+      </div>
+      {/* Footer */}
+      <div style={{ padding: '5px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.88)' }}>{title}</span>
+        <span style={{ fontFamily: 'monospace', fontSize: 7, color: 'var(--fg-4)', letterSpacing: 1 }}>
+          {choices} {choices === 1 ? 'CHOICE' : 'CHOICES'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function HeroEndingBadge({ label, highlighted }: { label: string; highlighted?: boolean }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      {highlighted && (
+        <motion.div
+          style={{
+            position: 'absolute', inset: -6, borderRadius: 13,
+            background: 'oklch(80% 0.16 60 / 0.08)',
+            border: '1px solid oklch(80% 0.16 60 / 0.2)',
+          }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
+      <div style={{
+        width: highlighted ? 160 : 110,
+        height: highlighted ? 42 : 36,
+        borderRadius: 9,
+        background: highlighted ? 'oklch(80% 0.16 60 / 0.14)' : 'rgba(255,255,255,0.03)',
+        border: `1.2px solid ${highlighted ? 'oklch(80% 0.16 60 / 0.6)' : 'rgba(255,255,255,0.09)'}`,
+        boxShadow: highlighted ? '0 0 28px oklch(80% 0.16 60 / 0.28), 0 6px 20px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.4)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <span style={{
+          fontFamily: 'monospace',
+          fontSize: highlighted ? 10 : 8,
+          letterSpacing: highlighted ? 2 : 1.5,
+          fontWeight: highlighted ? 600 : 400,
+          color: highlighted ? 'oklch(80% 0.16 60)' : 'var(--fg-4)',
+        }}>
+          {label}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function StatusPill({ label, accent }: { label: string; accent: 'mint' | 'violet' | 'amber' }) {
   const colors = {
-    mint: { bg: 'oklch(82% 0.18 165 / 0.12)', color: 'oklch(82% 0.18 165)', border: 'oklch(82% 0.18 165 / 0.3)' },
+    mint:   { bg: 'oklch(82% 0.18 165 / 0.12)', color: 'oklch(82% 0.18 165)', border: 'oklch(82% 0.18 165 / 0.3)' },
     violet: { bg: 'oklch(78% 0.18 285 / 0.12)', color: 'oklch(78% 0.18 285)', border: 'oklch(78% 0.18 285 / 0.3)' },
-    amber: { bg: 'oklch(80% 0.16 60 / 0.12)', color: 'oklch(80% 0.16 60)', border: 'oklch(80% 0.16 60 / 0.3)' },
+    amber:  { bg: 'oklch(80% 0.16 60 / 0.12)',  color: 'oklch(80% 0.16 60)',  border: 'oklch(80% 0.16 60 / 0.3)'  },
   }
   const c = colors[accent]
   return (

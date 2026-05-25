@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Smartphone, Monitor } from 'lucide-react'
 
-const PLAYER_URL = 'https://branchlab-eight.vercel.app/play/my-new-scenario'
+const PLAYER_URL = 'https://www.branchlab.online/play/wildwest'
 
 type View = 'mobile' | 'desktop'
 
@@ -333,7 +333,7 @@ function DesktopFrame({ pref }: { pref: boolean }) {
                   <path d="M3 4V3a1.5 1.5 0 013 0v1" stroke="rgba(255,255,255,0.3)" strokeWidth="0.9" />
                 </svg>
                 <span className="font-mono text-[9px] truncate" style={{ color: 'var(--fg-4)' }}>
-                  branchlab-eight.vercel.app/play/my-new-scenario
+                  branchlab.online/play/wildwest
                 </span>
               </div>
             </div>
