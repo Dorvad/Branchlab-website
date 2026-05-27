@@ -27,7 +27,7 @@ export default function PlayerShowcase() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
 
         {/* Left: device mockup + toggle */}
         <div className="flex flex-col items-center gap-5 order-2 lg:order-1">
@@ -152,7 +152,7 @@ export default function PlayerShowcase() {
   )
 }
 
-// ── Phone mockup ──────────────────────────────────────────────────────────
+// ── Phone mockup (landscape) ──────────────────────────────────────────────
 function PhoneFrame({ pref }: { pref: boolean }) {
   const [activated, setActivated] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -167,37 +167,38 @@ function PhoneFrame({ pref }: { pref: boolean }) {
     >
       <motion.div
         animate={pref ? {} : {
-          rotateY: [-8, -13, -8],
-          rotateX: [2, 5, 2],
-          y: [0, -10, 0],
+          rotateX: [1, 3.5, 1],
+          rotateY: [-4, -8, -4],
+          y: [0, -8, 0],
         }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
         style={{ transformStyle: 'preserve-3d' }}
       >
         <div className="relative">
-          {/* Phone body */}
+          {/* Phone body — landscape orientation */}
           <div
             className="relative overflow-hidden"
             style={{
-              width: 280,
-              height: 560,
-              borderRadius: 40,
+              width: 520,
+              height: 280,
+              borderRadius: 32,
               background: '#08090d',
               border: '2px solid rgba(255,255,255,0.13)',
-              boxShadow: '0 40px 100px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)',
+              boxShadow: '0 32px 90px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)',
             }}
           >
-            {/* Dynamic island */}
+            {/* Dynamic island — centered at top in landscape */}
             <div
-              className="absolute top-3 left-1/2 -translate-x-1/2 z-20"
-              style={{ width: 90, height: 26, borderRadius: 20, background: '#08090d' }}
+              className="absolute top-2.5 left-1/2 -translate-x-1/2 z-20"
+              style={{ width: 90, height: 24, borderRadius: 20, background: '#08090d' }}
               aria-hidden="true"
             />
 
-            {/* Side button highlights */}
-            <div className="absolute right-0 top-20 w-[2px] h-14 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
-            <div className="absolute left-0 top-16 w-[2px] h-10 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
-            <div className="absolute left-0 top-28 w-[2px] h-10 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
+            {/* Top edge — volume buttons */}
+            <div className="absolute top-0 right-24 w-10 h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
+            <div className="absolute top-0 right-36 w-8 h-[2px] rounded-b-sm"  style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
+            {/* Right edge — power button */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-12 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
 
             {/* Click-to-activate placeholder */}
             {!activated && (
@@ -227,7 +228,7 @@ function PhoneFrame({ pref }: { pref: boolean }) {
               </button>
             )}
 
-            {/* Loading spinner — visible after click until iframe loads */}
+            {/* Loading spinner */}
             {activated && !loaded && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3"
                 style={{ background: '#08090d' }}>
@@ -243,14 +244,14 @@ function PhoneFrame({ pref }: { pref: boolean }) {
               </div>
             )}
 
-            {/* Live iframe — only mounted after user activates */}
+            {/* Live iframe */}
             {activated && (
               <iframe
                 src={PLAYER_URL}
                 onLoad={() => setLoaded(true)}
                 className="absolute inset-0 w-full h-full border-0"
                 allow="fullscreen"
-                title="BranchLab scenario player — mobile view"
+                title="BranchLab scenario player — mobile landscape view"
                 style={{ borderRadius: 'inherit' }}
               />
             )}
@@ -258,8 +259,8 @@ function PhoneFrame({ pref }: { pref: boolean }) {
 
           {/* Glow */}
           <div
-            className="absolute -bottom-6 left-1/2 -translate-x-1/2 rounded-full blur-3xl pointer-events-none"
-            style={{ width: 220, height: 44, background: 'oklch(78% 0.18 285 / 0.28)' }}
+            className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-full blur-3xl pointer-events-none"
+            style={{ width: 340, height: 40, background: 'oklch(78% 0.18 285 / 0.25)' }}
             aria-hidden="true"
           />
         </div>
