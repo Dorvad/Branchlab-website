@@ -12,17 +12,12 @@ const SCENARIOS = [
     displayUrl: 'branchlab.online/play/wildwest',
     label: 'Wild West',
     genre: 'Western',
-    tagline: 'A frontier standoff. No good options.',
-    emoji: '🤠',
-    chapter: 'I',
     accent: {
       color:  'oklch(78% 0.17 52)',
       bg:     'oklch(78% 0.17 52 / 0.12)',
       border: 'oklch(78% 0.17 52 / 0.55)',
       glow:   'oklch(78% 0.17 52 / 0.25)',
     },
-    // card atmosphere gradient
-    cardGrad: 'linear-gradient(145deg, oklch(30% 0.13 46 / 0.75) 0%, oklch(14% 0.05 28 / 0.35) 100%)',
   },
   {
     id: 'teenrom',
@@ -30,16 +25,12 @@ const SCENARIOS = [
     displayUrl: 'branchlab.online/play/teenrom',
     label: 'High School',
     genre: 'Drama',
-    tagline: 'Navigate the halls of coming-of-age decisions.',
-    emoji: '🏫',
-    chapter: 'II',
     accent: {
       color:  'oklch(75% 0.22 348)',
       bg:     'oklch(75% 0.22 348 / 0.12)',
       border: 'oklch(75% 0.22 348 / 0.55)',
       glow:   'oklch(75% 0.22 348 / 0.25)',
     },
-    cardGrad: 'linear-gradient(145deg, oklch(26% 0.16 330 / 0.75) 0%, oklch(14% 0.07 295 / 0.35) 100%)',
   },
 ] as const
 
@@ -83,113 +74,55 @@ export default function PlayerShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="w-full"
+            className="flex gap-1 p-1 rounded-xl border w-full"
+            style={{
+              background: 'rgba(255,255,255,0.02)',
+              borderColor: 'rgba(255,255,255,0.08)',
+            }}
+            role="group"
+            aria-label="Choose scenario"
           >
-            <p className="font-mono text-[10px] tracking-widest uppercase mb-3 text-center" style={{ color: 'var(--fg-4)' }}>
-              Choose a scenario
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {SCENARIOS.map(s => {
-                const active = s.id === scenarioId
-                return (
-                  <motion.button
-                    key={s.id}
-                    onClick={() => setScenarioId(s.id)}
-                    aria-pressed={active}
-                    className="relative text-left rounded-2xl border overflow-hidden focus-visible:outline-none focus-visible:ring-2"
-                    style={{
-                      background: 'rgba(10,11,17,0.85)',
-                      borderColor: active ? s.accent.border : 'rgba(255,255,255,0.08)',
-                      boxShadow: active
-                        ? `0 0 0 1px ${s.accent.border}, 0 0 32px ${s.accent.glow}`
-                        : '0 0 0 1px rgba(255,255,255,0.04)',
-                    }}
-                    whileHover={{ scale: 1.025 }}
-                    whileTap={{ scale: 0.975 }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                  >
-                    {/* Atmospheric gradient layer */}
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{ background: s.cardGrad }}
+            {SCENARIOS.map(s => {
+              const active = s.id === scenarioId
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => setScenarioId(s.id)}
+                  aria-pressed={active}
+                  className="relative flex-1 flex items-center gap-2.5 px-4 py-3 rounded-lg text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                  style={{ color: active ? 'var(--fg-0)' : 'var(--fg-3)' }}
+                >
+                  {active && (
+                    <motion.div
+                      layoutId="scenario-pill"
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        background: s.accent.bg,
+                        border: `1px solid ${s.accent.border}`,
+                        boxShadow: `0 0 18px ${s.accent.glow}`,
+                      }}
+                      transition={{ type: 'spring', stiffness: 420, damping: 32 }}
                     />
-
-                    {/* Active inner glow */}
-                    <AnimatePresence>
-                      {active && (
-                        <motion.div
-                          key="active-bg"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="absolute inset-0 pointer-events-none"
-                          style={{ background: s.accent.bg }}
-                        />
-                      )}
-                    </AnimatePresence>
-
-                    {/* Content */}
-                    <div className="relative z-10 p-4 pb-4">
-                      {/* Chapter · Genre */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span
-                          className="font-mono text-[9px] tracking-widest uppercase"
-                          style={{ color: active ? s.accent.color : 'var(--fg-4)' }}
-                        >
-                          {s.chapter} · {s.genre}
-                        </span>
-                      </div>
-
-                      {/* Big emoji */}
-                      <div className="text-[40px] leading-none mb-3">{s.emoji}</div>
-
-                      {/* Title */}
-                      <p
-                        className="text-sm font-semibold mb-1 transition-colors"
-                        style={{ color: active ? 'var(--fg-0)' : 'var(--fg-2)' }}
-                      >
-                        {s.label}
-                      </p>
-
-                      {/* Tagline */}
-                      <p className="text-[11px] leading-snug" style={{ color: 'var(--fg-3)' }}>
-                        {s.tagline}
-                      </p>
-
-                      {/* Now playing badge */}
-                      <div className="mt-3 h-5">
-                        <AnimatePresence>
-                          {active && (
-                            <motion.span
-                              key="playing"
-                              initial={{ opacity: 0, y: 5 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 3 }}
-                              transition={{ duration: 0.2 }}
-                              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-mono text-[9px] tracking-widest uppercase border"
-                              style={{
-                                color: s.accent.color,
-                                borderColor: s.accent.border,
-                                background: s.accent.bg,
-                              }}
-                            >
-                              <motion.span
-                                className="w-1.5 h-1.5 rounded-full flex-none"
-                                style={{ background: s.accent.color }}
-                                animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
-                                transition={{ duration: 1.4, repeat: Infinity }}
-                              />
-                              Now playing
-                            </motion.span>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
-                  </motion.button>
-                )
-              })}
-            </div>
+                  )}
+                  {/* Accent dot — pulses when active */}
+                  <motion.span
+                    className="relative w-2 h-2 rounded-full flex-none"
+                    style={{ background: active ? s.accent.color : 'rgba(255,255,255,0.18)' }}
+                    animate={active ? { scale: [1, 1.35, 1], opacity: [1, 0.55, 1] } : {}}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  <div className="relative min-w-0">
+                    <p className="text-xs font-semibold leading-tight truncate">{s.label}</p>
+                    <p
+                      className="font-mono text-[9px] tracking-widest uppercase leading-tight mt-0.5"
+                      style={{ color: active ? s.accent.color : 'var(--fg-4)' }}
+                    >
+                      {s.genre}
+                    </p>
+                  </div>
+                </button>
+              )
+            })}
           </motion.div>
 
           {/* ── Device toggle ── */}
