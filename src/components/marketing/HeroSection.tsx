@@ -1,11 +1,10 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Play } from 'lucide-react'
 import { featurePills } from './marketing-data'
-import ProductFlowModal from './ProductFlowModal'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -19,7 +18,6 @@ const fadeUp = {
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const prefersReducedMotion = useReducedMotion()
-  const [modalOpen, setModalOpen] = useState(false)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -128,14 +126,14 @@ export default function HeroSection() {
               Start building
               <ArrowRight size={15} />
             </Link>
-            <button
-              onClick={() => setModalOpen(true)}
+            <a
+              href="#player"
               className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium border transition-all hover:bg-white/5 active:scale-95"
               style={{ borderColor: 'rgba(255,255,255,0.12)', color: 'var(--fg-1)' }}
             >
               <Play size={13} fill="currentColor" />
               See how it works
-            </button>
+            </a>
           </motion.div>
 
           {/* Feature pills */}
@@ -210,7 +208,6 @@ export default function HeroSection() {
         />
       </motion.div>
 
-      <ProductFlowModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </section>
   )
 }
