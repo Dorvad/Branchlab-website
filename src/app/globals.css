@@ -258,3 +258,41 @@ select.inspector-input option {
     animation: none !important;
   }
 }
+
+/* ── Accessibility modes ────────────────────────────────────────────────────── */
+
+html.a11y-text-large  { font-size: 110%; }
+html.a11y-text-xlarge { font-size: 125%; }
+
+html.a11y-high-contrast {
+  --bg-0: #000000;
+  --bg-1: #0a0a0a;
+  --bg-2: #111111;
+  --bg-3: #1a1a1a;
+  --fg-0: #ffffff;
+  --fg-1: #f0f0f0;
+  --fg-2: #d8d8d8;
+  --fg-3: #b0b0b0;
+  --fg-4: #808080;
+  --neon-mint: #00ff88;
+  --neon-violet: #cc99ff;
+}
+
+html.a11y-high-contrast body {
+  background: #000;
+  color: #fff;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+html.a11y-link-highlight a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Caveat } from 'next/font/google'
 import './globals.css'
+import AccessibilityWidget from '@/components/marketing/AccessibilityWidget'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ background: 'var(--bg-0)', color: 'var(--fg-0)' }}
       >
         {children}
+        <AccessibilityWidget />
       </body>
     </html>
   )

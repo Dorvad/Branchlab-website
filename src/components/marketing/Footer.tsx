@@ -16,8 +16,9 @@ const footerLinks = {
     { label: 'Play a demo', href: `${APP_URL}/play/balcony-at-the-party` },
   ],
   Legal: [
-    { label: 'Terms of service', href: '#terms' },
-    { label: 'Privacy policy', href: '#privacy' },
+    { label: 'Terms of service', href: '/terms' },
+    { label: 'Privacy policy', href: '/privacy' },
+    { label: 'Accessibility', href: '/accessibility' },
   ],
 }
 
