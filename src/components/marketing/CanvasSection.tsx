@@ -1,327 +1,14 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GitBranch, Layers, CheckCircle2 } from 'lucide-react'
 
 const features = [
-  { icon: GitBranch, label: 'Visual node canvas', desc: 'Drag, connect, and rearrange scenes with a click.' },
-  { icon: Layers,    label: 'Multi-branch structure', desc: 'Layer unlimited decision paths without losing track.' },
-  { icon: CheckCircle2, label: 'Built-in validation', desc: 'Catch dead ends and broken links before you publish.' },
+  { icon: GitBranch,    label: 'Visual node canvas',    desc: 'Drag, connect, and rearrange scenes with a click.' },
+  { icon: Layers,       label: 'Multi-branch structure', desc: 'Layer unlimited decision paths without losing track.' },
+  { icon: CheckCircle2, label: 'Built-in validation',   desc: 'Catch dead ends and broken links before you publish.' },
 ]
-
-// Layout constants
-const NODE_W = 110
-const NODE_H = 70
-const VGAP   = 48
-
-// Row y positions (4 rows)
-const Y0 = 10
-const Y1 = Y0 + NODE_H + VGAP   // 128
-const Y2 = Y1 + NODE_H + VGAP   // 246
-const Y3 = Y2 + NODE_H + VGAP   // 364
-
-// Row 2: 4 nodes with 16px gap
-const R2_STEP = NODE_W + 16      // 126
-const R2_LEFT = 26
-const X2 = [R2_LEFT, R2_LEFT + R2_STEP, R2_LEFT + 2 * R2_STEP, R2_LEFT + 3 * R2_STEP]
-// X2 = [26, 152, 278, 404]
-
-// Row 1: each node centered between its two children
-const X1 = [(X2[0] + X2[1]) / 2, (X2[2] + X2[3]) / 2]
-// X1 = [89, 341]
-
-// Row 0: centered between row-1 nodes
-const X0 = (X1[0] + X1[1]) / 2
-// X0 = 215
-
-// Node descriptors for the scenario graph
-const NODES = [
-  { id: 'start',    x: X0,    y: Y0, grad: 'vt-blue',   title: 'Opening',      highlighted: false, isStart: true  },
-  { id: 'speakup',  x: X1[0], y: Y1, grad: 'vt-mint',   title: 'Speak Up',     highlighted: true,  isStart: false },
-  { id: 'holdback', x: X1[1], y: Y1, grad: 'vt-warm',   title: 'Hold Back',    highlighted: false, isStart: false },
-  { id: 'direct',   x: X2[0], y: Y2, grad: 'vt-mint',   title: 'Direct Ask',   highlighted: false, isStart: false },
-  { id: 'gentle',   x: X2[1], y: Y2, grad: 'vt-blue',   title: 'Gentle Push',  highlighted: false, isStart: false },
-  { id: 'wait',     x: X2[2], y: Y2, grad: 'vt-blue',   title: 'Wait…',        highlighted: false, isStart: false },
-  { id: 'exit',     x: X2[3], y: Y2, grad: 'vt-warm',   title: 'Exit Quietly', highlighted: false, isStart: false },
-  { id: 'outA',     x: X2[0], y: Y3, grad: 'vt-amber',  title: 'Outcome A',    highlighted: false, isStart: false },
-  { id: 'outB',     x: X2[1], y: Y3, grad: 'vt-amber',  title: 'Outcome B',    highlighted: false, isStart: false },
-  { id: 'coaching', x: X2[2], y: Y3, grad: 'vt-violet', title: 'Coaching',     highlighted: false, isStart: false },
-  { id: 'outC',     x: X2[3], y: Y3, grad: 'vt-amber',  title: 'Outcome C',    highlighted: false, isStart: false },
-]
-
-function nodeCenter(id: string): [number, number] {
-  const n = NODES.find(n => n.id === id)!
-  return [n.x + NODE_W / 2, n.y + NODE_H / 2]
-}
-
-const EDGES: Array<[string, string, boolean]> = [
-  ['start',    'speakup',  true],
-  ['start',    'holdback', false],
-  ['speakup',  'direct',   false],
-  ['speakup',  'gentle',   false],
-  ['holdback', 'wait',     false],
-  ['holdback', 'exit',     false],
-  ['direct',   'outA',     false],
-  ['gentle',   'outB',     false],
-  ['wait',     'coaching', false],
-  ['exit',     'outC',     false],
-]
-
-function SceneNode({
-  x, y, grad, title, highlighted, isStart,
-}: {
-  x: number; y: number; grad: string; title: string
-  highlighted: boolean; isStart: boolean
-}) {
-  return (
-    <g transform={`translate(${x},${y})`}>
-      {/* Glow on highlighted */}
-      {highlighted && (
-        <rect
-          x={-4} y={-4} width={NODE_W + 8} height={NODE_H + 8} rx={12}
-          fill="oklch(82% 0.18 165 / 0.18)"
-          filter="url(#glow-mint)"
-        />
-      )}
-      {/* Card body */}
-      <rect
-        width={NODE_W} height={NODE_H} rx={8}
-        fill="rgba(16,18,26,0.95)"
-        stroke={highlighted ? 'oklch(82% 0.18 165 / 0.7)' : 'rgba(255,255,255,0.1)'}
-        strokeWidth={highlighted ? 1.5 : 0.8}
-      />
-      {/* Video thumbnail strip */}
-      <rect x={0} y={0} width={NODE_W} height={32} rx="8 8 0 0" fill={`url(#${grad})`} opacity={0.9} />
-      <rect x={0} y={24} width={NODE_W} height={8} fill="rgba(16,18,26,0.95)" />
-      {/* Play icon */}
-      <circle cx={NODE_W / 2} cy={16} r={8} fill="rgba(0,0,0,0.4)" />
-      <polygon
-        points={`${NODE_W / 2 - 3},12 ${NODE_W / 2 - 3},20 ${NODE_W / 2 + 5},16`}
-        fill="rgba(255,255,255,0.85)"
-      />
-      {/* Title */}
-      <text x={8} y={46} fontFamily="sans-serif" fontSize={8.5} fontWeight="600" fill="rgba(255,255,255,0.9)">
-        {title}
-      </text>
-      {/* Start badge */}
-      {isStart && (
-        <>
-          <rect x={8} y={52} width={26} height={10} rx={3} fill="oklch(78% 0.18 285 / 0.25)" stroke="oklch(78% 0.18 285 / 0.4)" strokeWidth={0.6} />
-          <text x={21} y={60} textAnchor="middle" fontFamily="monospace" fontSize={5.5} fill="oklch(78% 0.18 285)">START</text>
-        </>
-      )}
-    </g>
-  )
-}
-
-function ScenarioGraph() {
-  return (
-    <svg
-      viewBox="0 0 540 450"
-      className="w-full h-full"
-    >
-      <defs>
-        {/* Gradient fills */}
-        <linearGradient id="vt-blue" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(60% 0.18 240)" />
-          <stop offset="100%" stopColor="oklch(55% 0.2 270)" />
-        </linearGradient>
-        <linearGradient id="vt-mint" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(58% 0.2 165)" />
-          <stop offset="100%" stopColor="oklch(52% 0.22 200)" />
-        </linearGradient>
-        <linearGradient id="vt-warm" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(60% 0.18 30)" />
-          <stop offset="100%" stopColor="oklch(55% 0.2 15)" />
-        </linearGradient>
-        <linearGradient id="vt-violet" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(60% 0.2 285)" />
-          <stop offset="100%" stopColor="oklch(55% 0.22 300)" />
-        </linearGradient>
-        <linearGradient id="vt-amber" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(72% 0.16 60)" />
-          <stop offset="100%" stopColor="oklch(66% 0.18 40)" />
-        </linearGradient>
-        {/* Glow filter */}
-        <filter id="glow-mint" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-        {/* Edge gradient */}
-        <linearGradient id="edge-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.25)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0.08)" />
-        </linearGradient>
-        {/* Particle */}
-        <radialGradient id="particle-mint">
-          <stop offset="0%" stopColor="oklch(82% 0.18 165)" stopOpacity="1" />
-          <stop offset="100%" stopColor="oklch(82% 0.18 165)" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="particle-violet">
-          <stop offset="0%" stopColor="oklch(78% 0.18 285)" stopOpacity="1" />
-          <stop offset="100%" stopColor="oklch(78% 0.18 285)" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      {/* Edges */}
-      {EDGES.map(([from, to, highlighted], i) => {
-        const [x1, y1] = nodeCenter(from)
-        const [x2, y2] = nodeCenter(to)
-        const midY = (y1 + y2) / 2
-        return (
-          <path
-            key={i}
-            d={`M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`}
-            fill="none"
-            stroke={highlighted ? 'oklch(82% 0.18 165 / 0.6)' : 'url(#edge-grad)'}
-            strokeWidth={highlighted ? 1.8 : 1}
-            strokeDasharray={highlighted ? undefined : '3 3'}
-          />
-        )
-      })}
-
-      {/* Animated particles on highlighted edges */}
-      {[
-        { from: 'start',   to: 'speakup', dur: '2.4s', r: 3,   begin: '0s'   },
-        { from: 'speakup', to: 'direct',  dur: '2.6s', r: 2.5, begin: '1.2s' },
-      ].map(({ from, to, dur, r, begin }) => {
-        const [x1, y1] = nodeCenter(from)
-        const [x2, y2] = nodeCenter(to)
-        const midY = (y1 + y2) / 2
-        return (
-          <circle key={`${from}-${to}`} r={r} fill="url(#particle-mint)">
-            <animateMotion
-              dur={dur}
-              repeatCount="indefinite"
-              begin={begin}
-              path={`M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`}
-            />
-          </circle>
-        )
-      })}
-
-      {/* Nodes */}
-      {NODES.map(n => (
-        <SceneNode key={n.id} {...n} />
-      ))}
-
-      {/* Cursor dot floating near the highlighted node */}
-      {(() => {
-        const [cx, cy] = nodeCenter('speakup')
-        return (
-          <motion.g
-            animate={{ x: [0, 18, 18, 0, 0], y: [0, 0, 14, 14, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <circle cx={cx + 48} cy={cy - 14} r={5}  fill="white" opacity={0.9} />
-            <circle cx={cx + 48} cy={cy - 14} r={10} fill="white" opacity={0.12} />
-          </motion.g>
-        )
-      })()}
-    </svg>
-  )
-}
-
-function EditorMockup() {
-  return (
-    <div
-      className="rounded-2xl overflow-hidden border"
-      style={{
-        background: 'rgb(11,12,18)',
-        borderColor: 'rgba(255,255,255,0.1)',
-        boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05)',
-      }}
-    >
-      {/* App chrome */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 border-b"
-        style={{ background: 'rgba(8,9,14,0.9)', borderColor: 'rgba(255,255,255,0.07)' }}
-      >
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-500/70" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-          <div className="w-3 h-3 rounded-full bg-green-500/70" />
-        </div>
-        <span className="font-mono text-xs" style={{ color: 'var(--fg-3)' }}>
-          Tough Conversations · DRAFT
-        </span>
-        <div className="ml-auto flex items-center gap-2">
-          <div
-            className="px-3 py-1 rounded-md text-xs font-semibold"
-            style={{
-              background: 'oklch(82% 0.18 165 / 0.15)',
-              color: 'oklch(82% 0.18 165)',
-              border: '1px solid oklch(82% 0.18 165 / 0.3)',
-            }}
-          >
-            Publish →
-          </div>
-        </div>
-      </div>
-
-      {/* Body: sidebar + canvas */}
-      <div className="flex" style={{ height: 420 }}>
-        {/* Sidebar */}
-        <div
-          className="flex-none w-40 border-r overflow-y-auto p-2 space-y-0.5"
-          style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(8,9,14,0.5)' }}
-        >
-          <div className="px-2 py-1.5 font-mono text-xs mb-2" style={{ color: 'var(--fg-3)' }}>
-            SCENES (11)
-          </div>
-          {NODES.map((n, i) => (
-            <div
-              key={n.id}
-              className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs"
-              style={{
-                background: n.highlighted ? 'oklch(82% 0.18 165 / 0.1)' : i === 0 ? 'rgba(255,255,255,0.06)' : 'transparent',
-                color: n.highlighted ? 'oklch(82% 0.18 165)' : 'var(--fg-2)',
-              }}
-            >
-              <div
-                className="w-2 h-2 rounded-full flex-none"
-                style={{
-                  background: n.grad === 'vt-mint' ? 'oklch(82% 0.18 165)' :
-                    n.grad === 'vt-violet' ? 'oklch(78% 0.18 285)' :
-                    n.grad === 'vt-amber' ? 'oklch(80% 0.16 60)' :
-                    n.grad === 'vt-warm' ? 'oklch(70% 0.18 25)' :
-                    'oklch(70% 0.18 240)',
-                }}
-              />
-              <span className="truncate">{n.title}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Canvas */}
-        <div className="flex-1 relative overflow-hidden" style={{ background: 'rgba(8,9,14,0.3)' }}>
-          {/* Dot grid */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-            }}
-          />
-          <div className="absolute inset-0 p-4">
-            <ScenarioGraph />
-          </div>
-        </div>
-      </div>
-
-      {/* Status bar */}
-      <div
-        className="flex items-center gap-4 px-4 py-2 border-t font-mono text-xs"
-        style={{ borderColor: 'rgba(255,255,255,0.06)', color: 'var(--fg-3)', background: 'rgba(8,9,14,0.7)' }}
-      >
-        <span style={{ color: 'oklch(82% 0.18 165)' }}>● 11 scenes</span>
-        <span>14 edges</span>
-        <span>3 endpoints</span>
-        <span className="ml-auto" style={{ color: 'oklch(80% 0.16 60)' }}>2 warnings</span>
-      </div>
-    </div>
-  )
-}
 
 export default function CanvasSection() {
   return (
@@ -409,7 +96,7 @@ export default function CanvasSection() {
             </motion.div>
           </div>
 
-          {/* Right: 3D editor mockup */}
+          {/* Right: real editor screenshot, 3D perspective tilt */}
           <motion.div
             initial={{ opacity: 0, rotateX: -18, rotateY: 10, y: 40 }}
             whileInView={{ opacity: 1, rotateX: -6, rotateY: 4, y: 0 }}
@@ -417,7 +104,22 @@ export default function CanvasSection() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ perspective: '1600px', transformStyle: 'preserve-3d' }}
           >
-            <EditorMockup />
+            <div
+              className="rounded-2xl overflow-hidden border"
+              style={{
+                borderColor: 'rgba(255,255,255,0.1)',
+                boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05)',
+              }}
+            >
+              <Image
+                src="/screenshots/editor.jpg"
+                alt="BranchLab Creator Studio — visual branching scenario editor"
+                width={2954}
+                height={1771}
+                className="w-full h-auto block"
+                priority
+              />
+            </div>
           </motion.div>
 
         </div>

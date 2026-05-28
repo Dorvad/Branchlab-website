@@ -326,9 +326,12 @@ function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
               boxShadow: '0 32px 90px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)',
             }}
           >
-            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-20" style={{ width: 90, height: 24, borderRadius: 20, background: '#08090d' }} aria-hidden="true" />
+            {/* Landscape: small camera dot top-right, no pill notch */}
+            <div className="absolute top-3 right-3.5 z-20 rounded-full" style={{ width: 7, height: 7, background: 'rgba(255,255,255,0.13)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' }} aria-hidden="true" />
+            {/* Volume buttons — top edge */}
             <div className="absolute top-0 right-24 w-10 h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
-            <div className="absolute top-0 right-36 w-8 h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
+            <div className="absolute top-0 right-36 w-8  h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
+            {/* Power button — right edge */}
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-12 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
 
             {!activated && <ActivatePlaceholder onActivate={() => setActivated(true)} />}
