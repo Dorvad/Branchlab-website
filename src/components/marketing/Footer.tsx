@@ -7,7 +7,7 @@ const footerLinks = {
   Product: [
     { label: 'Creator Studio', href: '#creator-studio' },
     { label: 'Scenario Player', href: '#player' },
-    { label: 'How it works', href: '#how-it-works' },
+    { label: 'How it works', href: '#player' },
     { label: 'Use cases', href: '#use-cases' },
   ],
   Resources: [

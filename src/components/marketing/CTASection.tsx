@@ -113,7 +113,7 @@ export default function CTASection() {
             <ArrowRight size={16} />
           </Link>
           <a
-            href="#how-it-works"
+            href="#player"
             className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-base font-medium border transition-all hover:bg-white/5 active:scale-95"
             style={{ borderColor: 'rgba(255,255,255,0.14)', color: 'var(--fg-1)' }}
           >

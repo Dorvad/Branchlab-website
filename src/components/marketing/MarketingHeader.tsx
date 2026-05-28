@@ -8,7 +8,7 @@ import { APP_URL } from './marketing-data'
 
 const navLinks = [
   { label: 'Product', href: '#product' },
-  { label: 'How it works', href: '#how-it-works' },
+  { label: 'How it works', href: '#player' },
   { label: 'Use cases', href: '#use-cases' },
   { label: 'Why BranchLab', href: '#why-branchlab' },
 ]
