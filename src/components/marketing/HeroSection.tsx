@@ -85,12 +85,21 @@ export default function HeroSection() {
             className="text-[52px] sm:text-[64px] font-semibold leading-[0.95] tracking-[-0.03em]"
           >
             Turn video clips into{' '}
-            <em
+            <motion.span
               className="not-italic font-medium"
-              style={{ color: 'var(--neon-mint)', textShadow: '0 0 40px oklch(82% 0.18 165 / 0.4)' }}
+              style={{
+                background: 'linear-gradient(90deg, oklch(60% 0.18 165), oklch(82% 0.18 165), #e8fff6, oklch(82% 0.18 165), oklch(60% 0.18 165))',
+                backgroundSize: '200% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+              initial={{ backgroundPosition: '0% 0' }}
+              animate={{ backgroundPosition: '200% 0' }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
             >
               branching
-            </em>{' '}
+            </motion.span>{' '}
             simulations.
           </motion.h1>
 
