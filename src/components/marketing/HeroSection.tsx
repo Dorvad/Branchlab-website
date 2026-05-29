@@ -1,8 +1,9 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import type { MotionValue } from 'framer-motion'
 import { ArrowRight, Play } from 'lucide-react'
 import { featurePills } from './marketing-data'
 
@@ -168,25 +169,8 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right — animated graph visual */}
-        <div
-          className="hidden lg:block"
-          style={{ perspective: '1000px' }}
-          aria-hidden="true"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            style={prefersReducedMotion ? {} : {
-              rotateX: heroRotateX,
-              rotateY: heroRotateY,
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            <BranchingHeroVisual />
-          </motion.div>
-        </div>
+        {/* Right — animated graph visual — visible on all screens */}
+        <HeroVisualScaler prefersReducedMotion={!!prefersReducedMotion} rotateX={heroRotateX} rotateY={heroRotateY} />
       </div>
 
       {/* Scroll hint */}
@@ -209,6 +193,58 @@ export default function HeroSection() {
       </motion.div>
 
     </section>
+  )
+}
+
+// ── Responsive scaler for the hero visual ────────────────────────────────
+
+function HeroVisualScaler({
+  prefersReducedMotion,
+  rotateX,
+  rotateY,
+}: {
+  prefersReducedMotion: boolean
+  rotateX: MotionValue<number>
+  rotateY: MotionValue<number>
+}) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const update = () => {
+      const el = wrapperRef.current
+      if (!el) return
+      // The visual canvas is ~520px wide; scale to fit the container
+      setScale(Math.min(1, el.clientWidth / 520))
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    if (wrapperRef.current) ro.observe(wrapperRef.current)
+    return () => ro.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="w-full overflow-hidden"
+      style={{ perspective: '1000px', height: Math.round(460 * scale) }}
+      aria-hidden="true"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        style={prefersReducedMotion ? { scale } : {
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+          scale,
+          transformOrigin: 'top center',
+        }}
+      >
+        <BranchingHeroVisual />
+      </motion.div>
+    </div>
   )
 }
 

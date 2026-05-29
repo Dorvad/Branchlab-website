@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Smartphone, Monitor } from 'lucide-react'
 
@@ -20,16 +20,16 @@ const SCENARIOS = [
     },
   },
   {
-    id: 'teenrom',
-    url: 'https://www.branchlab.online/play/teenrom',
-    displayUrl: 'branchlab.online/play/teenrom',
-    label: 'High School',
-    genre: 'Drama',
+    id: 'pro-mask',
+    url: 'https://www.branchlab.online/play/pro-mask',
+    displayUrl: 'branchlab.online/play/pro-mask',
+    label: 'Pro Mask',
+    genre: 'Professional',
     accent: {
-      color:  'oklch(75% 0.22 348)',
-      bg:     'oklch(75% 0.22 348 / 0.12)',
-      border: 'oklch(75% 0.22 348 / 0.55)',
-      glow:   'oklch(75% 0.22 348 / 0.25)',
+      color:  'oklch(72% 0.19 200)',
+      bg:     'oklch(72% 0.19 200 / 0.12)',
+      border: 'oklch(72% 0.19 200 / 0.55)',
+      glow:   'oklch(72% 0.19 200 / 0.25)',
     },
   },
 ] as const
@@ -59,7 +59,7 @@ export default function PlayerShowcase() {
           background:
             scenarioId === 'wildwest'
               ? 'radial-gradient(ellipse 700px 500px at 10% 50%, oklch(78% 0.17 52 / 0.05) 0%, transparent 55%)'
-              : 'radial-gradient(ellipse 700px 500px at 10% 50%, oklch(75% 0.22 348 / 0.05) 0%, transparent 55%)',
+              : 'radial-gradient(ellipse 700px 500px at 10% 50%, oklch(72% 0.19 200 / 0.05) 0%, transparent 55%)',
         }}
       />
 
@@ -298,63 +298,92 @@ function LoadingSpinner() {
   )
 }
 
+// ── Responsive scale hook ─────────────────────────────────────────────────
+function useFrameScale(targetWidth: number) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+  useEffect(() => {
+    const update = () => {
+      const parent = wrapperRef.current?.parentElement
+      if (!parent) return
+      setScale(Math.min(1, parent.clientWidth / targetWidth))
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    if (wrapperRef.current?.parentElement) ro.observe(wrapperRef.current.parentElement)
+    return () => ro.disconnect()
+  }, [targetWidth])
+  return { wrapperRef, scale }
+}
+
 // ── Phone mockup (landscape) ──────────────────────────────────────────────
 function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
   const [activated, setActivated] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const { wrapperRef, scale } = useFrameScale(520)
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: -14 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      style={{ perspective: '900px' }}
+    // Outer div collapses to the scaled height so layout doesn't leave a gap
+    <div
+      ref={wrapperRef}
+      className="w-full flex justify-center overflow-hidden"
+      style={{ height: Math.round(280 * scale) }}
     >
       <motion.div
-        animate={pref ? {} : { rotateX: [1, 3.5, 1], rotateY: [-4, -8, -4], y: [0, -8, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ transformStyle: 'preserve-3d' }}
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: -14 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        style={{ perspective: '900px', transformOrigin: 'top center' }}
       >
-        <div className="relative">
+        <motion.div
+          animate={pref ? {} : { rotateX: [1, 3.5, 1], rotateY: [-4, -8, -4], y: [0, -8, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ transformStyle: 'preserve-3d' }}
+        >
           <div
-            className="relative overflow-hidden"
-            style={{
-              width: 520, height: 280, borderRadius: 32,
-              background: '#08090d',
-              border: '2px solid rgba(255,255,255,0.13)',
-              boxShadow: '0 32px 90px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)',
-            }}
+            className="relative"
+            style={{ scale, transformOrigin: 'top center' }}
           >
-            {/* Landscape: small camera dot top-right, no pill notch */}
-            <div className="absolute top-3 right-3.5 z-20 rounded-full" style={{ width: 7, height: 7, background: 'rgba(255,255,255,0.13)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' }} aria-hidden="true" />
-            {/* Volume buttons — top edge */}
-            <div className="absolute top-0 right-24 w-10 h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
-            <div className="absolute top-0 right-36 w-8  h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
-            {/* Power button — right edge */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-12 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: 520, height: 280, borderRadius: 32,
+                background: '#08090d',
+                border: '2px solid rgba(255,255,255,0.13)',
+                boxShadow: '0 32px 90px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)',
+              }}
+            >
+              {/* Landscape: small camera dot top-right */}
+              <div className="absolute top-3 right-3.5 z-20 rounded-full" style={{ width: 7, height: 7, background: 'rgba(255,255,255,0.13)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' }} aria-hidden="true" />
+              {/* Volume buttons — top edge */}
+              <div className="absolute top-0 right-24 w-10 h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
+              <div className="absolute top-0 right-36 w-8  h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
+              {/* Power button — right edge */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-12 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
 
-            {!activated && <ActivatePlaceholder onActivate={() => setActivated(true)} />}
-            {activated && !loaded && <LoadingSpinner />}
-            {activated && (
-              <iframe
-                src={url}
-                onLoad={() => setLoaded(true)}
-                className="absolute inset-0 w-full h-full border-0"
-                allow="fullscreen"
-                title="BranchLab scenario player — mobile landscape view"
-                style={{ borderRadius: 'inherit' }}
-              />
-            )}
+              {!activated && <ActivatePlaceholder onActivate={() => setActivated(true)} />}
+              {activated && !loaded && <LoadingSpinner />}
+              {activated && (
+                <iframe
+                  src={url}
+                  onLoad={() => setLoaded(true)}
+                  className="absolute inset-0 w-full h-full border-0"
+                  allow="fullscreen"
+                  title="BranchLab scenario player — mobile landscape view"
+                  style={{ borderRadius: 'inherit' }}
+                />
+              )}
+            </div>
+            <div
+              className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-full blur-3xl pointer-events-none"
+              style={{ width: 340, height: 40, background: 'oklch(78% 0.18 285 / 0.25)' }}
+              aria-hidden="true"
+            />
           </div>
-          <div
-            className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-full blur-3xl pointer-events-none"
-            style={{ width: 340, height: 40, background: 'oklch(78% 0.18 285 / 0.25)' }}
-            aria-hidden="true"
-          />
-        </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   )
 }
 
