@@ -116,7 +116,7 @@ export default function HeroSection() {
             className="flex flex-wrap items-center gap-3"
           >
             <Link
-              href="https://www.branchlab.online"
+              href="https://branchlab.online"
               className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all hover:brightness-110 active:scale-95"
               style={{
                 background: 'var(--neon-mint)',

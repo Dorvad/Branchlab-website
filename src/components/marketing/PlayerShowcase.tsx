@@ -8,7 +8,7 @@ import { Smartphone, Monitor } from 'lucide-react'
 const SCENARIOS = [
   {
     id: 'wildwest',
-    url: 'https://www.branchlab.online/play/wildwest',
+    url: 'https://branchlab.online/play/wildwest',
     displayUrl: 'branchlab.online/play/wildwest',
     label: 'Wild West',
     genre: 'Western',
@@ -21,7 +21,7 @@ const SCENARIOS = [
   },
   {
     id: 'promask',
-    url: 'https://www.branchlab.online/play/promask',
+    url: 'https://branchlab.online/play/promask',
     displayUrl: 'branchlab.online/play/promask',
     label: 'Pro Mask',
     genre: 'Professional',

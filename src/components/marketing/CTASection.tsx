@@ -101,7 +101,7 @@ export default function CTASection() {
           className="flex flex-wrap items-center justify-center gap-4 mb-14"
         >
           <Link
-            href="https://www.branchlab.online"
+            href="https://branchlab.online"
             className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-base font-medium transition-all hover:brightness-110 active:scale-95"
             style={{
               background: 'var(--neon-mint)',
