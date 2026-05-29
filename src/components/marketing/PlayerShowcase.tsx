@@ -323,11 +323,12 @@ function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
   const { wrapperRef, scale } = useFrameScale(520)
 
   return (
-    // Outer div collapses to the scaled height so layout doesn't leave a gap
+    // Outer wrapper: collapse to scaled height but leave room for float + glow
+    // No overflow-hidden here — the section already clips horizontal overflow
     <div
       ref={wrapperRef}
-      className="w-full flex justify-center overflow-hidden"
-      style={{ height: Math.round(280 * scale) }}
+      className="w-full flex justify-center"
+      style={{ height: Math.round((280 + 32) * scale) }}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
