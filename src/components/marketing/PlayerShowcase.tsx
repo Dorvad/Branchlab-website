@@ -20,9 +20,9 @@ const SCENARIOS = [
     },
   },
   {
-    id: 'pro-mask',
-    url: 'https://www.branchlab.online/play/pro-mask',
-    displayUrl: 'branchlab.online/play/pro-mask',
+    id: 'promask',
+    url: 'https://www.branchlab.online/play/promask',
+    displayUrl: 'branchlab.online/play/promask',
     label: 'Pro Mask',
     genre: 'Professional',
     accent: {
