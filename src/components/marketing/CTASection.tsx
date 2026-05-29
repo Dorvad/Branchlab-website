@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Play } from 'lucide-react'
+import { DottedSurface } from '@/components/ui/dotted-surface'
 
 export default function CTASection() {
   return (
@@ -11,7 +12,10 @@ export default function CTASection() {
       className="relative py-32 overflow-hidden"
       aria-labelledby="cta-headline"
     >
-      {/* Background radials */}
+      {/* Animated dot wave — replaces static dot-grid */}
+      <DottedSurface aria-hidden="true" />
+
+      {/* Background radials layered on top of dots */}
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
@@ -23,7 +27,6 @@ export default function CTASection() {
           `,
         }}
       />
-      <div className="pointer-events-none absolute inset-0 mkt-dot-grid opacity-20" aria-hidden="true" />
 
       {/* Horizontal separator line */}
       <div
