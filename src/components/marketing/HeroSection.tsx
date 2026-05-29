@@ -214,8 +214,8 @@ function HeroVisualScaler({
     const update = () => {
       const el = wrapperRef.current
       if (!el) return
-      // The visual canvas is ~520px wide; scale to fit the container
-      setScale(Math.min(1, el.clientWidth / 520))
+      // Visual canvas is 480px wide; scale down to fit narrower containers
+      setScale(Math.min(1, el.clientWidth / 480))
     }
     update()
     const ro = new ResizeObserver(update)
@@ -224,23 +224,29 @@ function HeroVisualScaler({
   }, [])
 
   return (
+    // Wrapper measures available width and collapses height to match scaled visual.
+    // No overflow-hidden here — hero section's own overflow-hidden handles any bleed.
     <div
       ref={wrapperRef}
-      className="w-full overflow-hidden"
-      style={{ perspective: '1000px', height: Math.round(460 * scale) }}
+      className="w-full"
+      style={{ height: Math.round(460 * scale), perspective: '1000px' }}
       aria-hidden="true"
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        style={prefersReducedMotion ? { scale } : {
-          rotateX,
-          rotateY,
-          transformStyle: 'preserve-3d',
-          scale,
-          transformOrigin: 'top center',
-        }}
+        style={prefersReducedMotion
+          ? { width: 480, transform: `scale(${scale})`, transformOrigin: 'top left' }
+          : {
+              width: 480,
+              scale,
+              transformOrigin: 'top left',
+              rotateX,
+              rotateY,
+              transformStyle: 'preserve-3d' as const,
+            }
+        }
       >
         <BranchingHeroVisual />
       </motion.div>
