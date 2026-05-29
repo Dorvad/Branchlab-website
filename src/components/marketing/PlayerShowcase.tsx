@@ -2,13 +2,113 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Smartphone, Monitor } from 'lucide-react'
+import { Smartphone, Monitor, Volume2, VolumeX, RotateCcw } from 'lucide-react'
+
+// ── Types ─────────────────────────────────────────────────────────────────
+interface BranchChoice { id: string; label: string; targetNodeId: string }
+interface BranchNode {
+  type: 'start' | 'scene' | 'ending'
+  title: string
+  video: string
+  thumbnail: string
+  choices: BranchChoice[]
+}
+interface ScenarioData { startNodeId: string; nodes: Record<string, BranchNode> }
+interface Accent { color: string; bg: string; border: string; glow: string }
+
+// ── Static scenario data (bundled from .blab exports) ─────────────────────
+const BASE = 'https://intzkjqmxrlfcbqjlaoj.supabase.co/storage/v1/object/public/Assets/6eea7bca-e4c2-413a-82fa-e406c9abdc82'
+
+const SCENARIO_DATA: Record<string, ScenarioData> = {
+  wildwest: {
+    startNodeId: 'node-1780045350132-16',
+    nodes: {
+      'node-1780045350132-16': {
+        type: 'start', title: 'Start',
+        video: `${BASE}/74d87d86-b956-410f-93e3-5aa915e5cbee.mp4`,
+        thumbnail: `${BASE}/74d87d86-b956-410f-93e3-5aa915e5cbee-thumb.jpg`,
+        choices: [
+          { id: 'c1', label: 'Draw', targetNodeId: 'node-1780045370406' },
+          { id: 'c2', label: 'Back away', targetNodeId: 'node-1780045368020' },
+          { id: 'c3', label: 'Talk it out', targetNodeId: 'node-1780045373266' },
+          { id: 'c4', label: 'Run', targetNodeId: 'node-1780045405485' },
+        ],
+      },
+      'node-1780045368020': {
+        type: 'ending', title: "The coward's path",
+        video: `${BASE}/1ff2bddf-4fbe-4c88-8711-ba6c73cd0af3.mp4`,
+        thumbnail: `${BASE}/1ff2bddf-4fbe-4c88-8711-ba6c73cd0af3-thumb.jpg`,
+        choices: [],
+      },
+      'node-1780045370406': {
+        type: 'ending', title: 'High noon',
+        video: `${BASE}/aa78646c-d24e-4bc6-813d-ba41d879ddda.mp4`,
+        thumbnail: `${BASE}/aa78646c-d24e-4bc6-813d-ba41d879ddda-thumb.jpg`,
+        choices: [],
+      },
+      'node-1780045373266': {
+        type: 'ending', title: 'Words win',
+        video: `${BASE}/ddef5983-0797-4e22-947a-87adbae4f701.mp4`,
+        thumbnail: `${BASE}/ddef5983-0797-4e22-947a-87adbae4f701-thumb.jpg`,
+        choices: [],
+      },
+      'node-1780045405485': {
+        type: 'ending', title: 'Dust in the wind',
+        video: `${BASE}/1ff3f73e-8363-41c0-ac05-a6f2ae66eaad.mp4`,
+        thumbnail: `${BASE}/1ff3f73e-8363-41c0-ac05-a6f2ae66eaad-thumb.jpg`,
+        choices: [],
+      },
+    },
+  },
+  promask: {
+    startNodeId: 'node-1780044793357-2',
+    nodes: {
+      'node-1780044793357-2': {
+        type: 'start', title: 'Opening Scene',
+        video: `${BASE}/82ca46e6-d457-4981-8e61-c307334c4202.mp4`,
+        thumbnail: `${BASE}/82ca46e6-d457-4981-8e61-c307334c4202-thumb.jpg`,
+        choices: [
+          { id: 'c1', label: 'Try to be funny', targetNodeId: 'node-1780044793357-4' },
+          { id: 'c2', label: 'Ask honestly', targetNodeId: 'node-1780044793357-5' },
+        ],
+      },
+      'node-1780044793357-4': {
+        type: 'scene', title: 'She walks away…',
+        video: `${BASE}/d85993ce-cafb-4fa8-bee3-e80662d8192a.mp4`,
+        thumbnail: `${BASE}/d85993ce-cafb-4fa8-bee3-e80662d8192a-thumb.jpg`,
+        choices: [
+          { id: 'c1', label: '"Maya, wait!"', targetNodeId: 'node-1780044876250' },
+        ],
+      },
+      'node-1780044793357-5': {
+        type: 'ending', title: 'You did it!',
+        video: `${BASE}/b999c34c-0123-41ca-855c-d843fd603f76.mp4`,
+        thumbnail: `${BASE}/b999c34c-0123-41ca-855c-d843fd603f76-thumb.jpg`,
+        choices: [],
+      },
+      'node-1780044876250': {
+        type: 'scene', title: 'Last chance',
+        video: `${BASE}/e65701bd-0787-4dbd-82c7-6a6f74c4e54b.mp4`,
+        thumbnail: `${BASE}/e65701bd-0787-4dbd-82c7-6a6f74c4e54b-thumb.jpg`,
+        choices: [
+          { id: 'c1', label: 'Ask honestly', targetNodeId: 'node-1780044793357-5' },
+          { id: 'c2', label: 'Try to be funny, again', targetNodeId: 'node-1780044946407' },
+        ],
+      },
+      'node-1780044946407': {
+        type: 'ending', title: 'You messed up',
+        video: `${BASE}/d954fced-3f65-481d-8c8a-b933ea19bbb2.mp4`,
+        thumbnail: `${BASE}/d954fced-3f65-481d-8c8a-b933ea19bbb2-thumb.jpg`,
+        choices: [],
+      },
+    },
+  },
+}
 
 // ── Scenario definitions ──────────────────────────────────────────────────
 const SCENARIOS = [
   {
     id: 'wildwest',
-    url: 'https://branchlab.online/play/wildwest',
     displayUrl: 'branchlab.online/play/wildwest',
     label: 'Wild West',
     genre: 'Western',
@@ -21,10 +121,9 @@ const SCENARIOS = [
   },
   {
     id: 'promask',
-    url: 'https://branchlab.online/play/promask',
     displayUrl: 'branchlab.online/play/promask',
-    label: 'Pro Mask',
-    genre: 'Professional',
+    label: 'Ask Your Crush',
+    genre: 'Romance',
     accent: {
       color:  'oklch(72% 0.19 200)',
       bg:     'oklch(72% 0.19 200 / 0.12)',
@@ -36,6 +135,124 @@ const SCENARIOS = [
 
 type ScenarioId = (typeof SCENARIOS)[number]['id']
 type View = 'mobile' | 'desktop'
+
+// ── Inline branch player ──────────────────────────────────────────────────
+function InlinePlayer({ scenarioId, accent }: { scenarioId: string; accent: Accent }) {
+  const data = SCENARIO_DATA[scenarioId]
+  const [currentNodeId, setCurrentNodeId] = useState(data.startNodeId)
+  const [showChoices, setShowChoices] = useState(false)
+  const [muted, setMuted] = useState(true)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  const node = data.nodes[currentNodeId]
+  const isEnding = node.type === 'ending'
+
+  const goToNode = (targetNodeId: string) => {
+    setCurrentNodeId(targetNodeId)
+    setShowChoices(false)
+  }
+
+  const restart = () => {
+    setCurrentNodeId(data.startNodeId)
+    setShowChoices(false)
+  }
+
+  const toggleMute = () => {
+    const v = videoRef.current
+    if (!v) return
+    v.muted = !v.muted
+    setMuted(v.muted)
+  }
+
+  return (
+    <div className="relative w-full h-full bg-black overflow-hidden">
+      {/* Video — key remounts element on node change, triggering autoPlay */}
+      <video
+        ref={videoRef}
+        key={currentNodeId}
+        src={node.video}
+        poster={node.thumbnail}
+        autoPlay
+        playsInline
+        muted
+        onEnded={() => setShowChoices(true)}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Mute toggle */}
+      <button
+        onClick={toggleMute}
+        className="absolute top-2 right-2 z-20 w-7 h-7 rounded-full flex items-center justify-center"
+        style={{ background: 'rgba(0,0,0,0.55)' }}
+        aria-label={muted ? 'Unmute' : 'Mute'}
+      >
+        {muted
+          ? <VolumeX size={12} style={{ color: 'rgba(255,255,255,0.7)' }} />
+          : <Volume2 size={12} style={{ color: 'white' }} />}
+      </button>
+
+      {/* Choices / ending overlay */}
+      <AnimatePresence>
+        {showChoices && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="absolute inset-x-0 bottom-0 p-3"
+            style={{
+              paddingTop: '2.5rem',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.82) 35%)',
+            }}
+          >
+            {isEnding ? (
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-xs font-semibold text-center" style={{ color: accent.color }}>
+                  {node.title}
+                </p>
+                <button
+                  onClick={restart}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                  style={{
+                    background: accent.bg,
+                    border: `1px solid ${accent.border}`,
+                    boxShadow: `0 0 14px ${accent.glow}`,
+                  }}
+                >
+                  <RotateCcw size={10} />
+                  Play again
+                </button>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: node.choices.length > 2 ? '1fr 1fr' : '1fr',
+                  gap: '0.375rem',
+                }}
+              >
+                {node.choices.map(choice => (
+                  <button
+                    key={choice.id}
+                    onClick={() => goToNode(choice.targetNodeId)}
+                    className="px-2.5 py-2 rounded-lg text-xs font-medium text-center leading-tight text-white"
+                    style={{
+                      background: accent.bg,
+                      border: `1px solid ${accent.border}`,
+                      boxShadow: `0 0 12px ${accent.glow}`,
+                    }}
+                  >
+                    {choice.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 // ── Section ───────────────────────────────────────────────────────────────
 export default function PlayerShowcase() {
@@ -68,17 +285,14 @@ export default function PlayerShowcase() {
         {/* Left: scenario picker + device toggle + mockup */}
         <div className="flex flex-col items-center gap-5 order-2 lg:order-1">
 
-          {/* ── Scenario picker ── */}
+          {/* Scenario picker */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="flex gap-1 p-1 rounded-xl border w-full"
-            style={{
-              background: 'rgba(255,255,255,0.02)',
-              borderColor: 'rgba(255,255,255,0.08)',
-            }}
+            style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.08)' }}
             role="group"
             aria-label="Choose scenario"
           >
@@ -104,7 +318,6 @@ export default function PlayerShowcase() {
                       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
                     />
                   )}
-                  {/* Accent dot — pulses when active */}
                   <motion.span
                     className="relative w-2 h-2 rounded-full flex-none"
                     style={{ background: active ? s.accent.color : 'rgba(255,255,255,0.18)' }}
@@ -125,17 +338,14 @@ export default function PlayerShowcase() {
             })}
           </motion.div>
 
-          {/* ── Device toggle ── */}
+          {/* Device toggle */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: 0.1 }}
             className="flex items-center gap-1 p-1 rounded-xl border"
-            style={{
-              background: 'rgba(255,255,255,0.02)',
-              borderColor: 'rgba(255,255,255,0.08)',
-            }}
+            style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.08)' }}
             role="group"
             aria-label="Switch device view"
           >
@@ -167,19 +377,21 @@ export default function PlayerShowcase() {
             ))}
           </motion.div>
 
-          {/* ── Frame — key includes scenario so it remounts on switch ── */}
+          {/* Frame — key remounts on scenario switch */}
           <AnimatePresence mode="wait">
             {view === 'mobile' ? (
               <PhoneFrame
                 key={`mobile-${scenarioId}`}
                 pref={!!pref}
-                url={scenario.url}
+                scenarioId={scenarioId}
+                accent={scenario.accent}
               />
             ) : (
               <DesktopFrame
                 key={`desktop-${scenarioId}`}
                 pref={!!pref}
-                url={scenario.url}
+                scenarioId={scenarioId}
+                accent={scenario.accent}
                 displayUrl={scenario.displayUrl}
               />
             )}
@@ -254,7 +466,7 @@ export default function PlayerShowcase() {
   )
 }
 
-// ── Shared placeholder / loading UI ──────────────────────────────────────
+// ── Shared "Try it" placeholder ───────────────────────────────────────────
 function ActivatePlaceholder({ onActivate }: { onActivate: () => void }) {
   return (
     <button
@@ -284,20 +496,6 @@ function ActivatePlaceholder({ onActivate }: { onActivate: () => void }) {
   )
 }
 
-function LoadingSpinner() {
-  return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3" style={{ background: '#08090d' }}>
-      <motion.div
-        className="w-8 h-8 rounded-full border-2"
-        style={{ borderColor: 'oklch(82% 0.18 165 / 0.3)', borderTopColor: 'oklch(82% 0.18 165)' }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
-      />
-      <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--fg-4)' }}>Loading</span>
-    </div>
-  )
-}
-
 // ── Responsive scale hook ─────────────────────────────────────────────────
 function useFrameScale(targetWidth: number) {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -317,14 +515,15 @@ function useFrameScale(targetWidth: number) {
 }
 
 // ── Phone mockup (landscape) ──────────────────────────────────────────────
-function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
+function PhoneFrame({
+  pref, scenarioId, accent,
+}: {
+  pref: boolean; scenarioId: string; accent: Accent
+}) {
   const [activated, setActivated] = useState(false)
-  const [loaded, setLoaded] = useState(false)
   const { wrapperRef, scale } = useFrameScale(520)
 
   return (
-    // Outer wrapper: collapse to scaled height but leave room for float + glow
-    // No overflow-hidden here — the section already clips horizontal overflow
     <div
       ref={wrapperRef}
       className="w-full flex justify-center"
@@ -342,10 +541,7 @@ function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
           transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           style={{ transformStyle: 'preserve-3d' }}
         >
-          <div
-            className="relative"
-            style={{ scale, transformOrigin: 'top center' }}
-          >
+          <div className="relative" style={{ scale, transformOrigin: 'top center' }}>
             <div
               className="relative overflow-hidden"
               style={{
@@ -355,26 +551,15 @@ function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
                 boxShadow: '0 32px 90px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)',
               }}
             >
-              {/* Landscape: small camera dot top-right */}
+              {/* Decorative phone details */}
               <div className="absolute top-3 right-3.5 z-20 rounded-full" style={{ width: 7, height: 7, background: 'rgba(255,255,255,0.13)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' }} aria-hidden="true" />
-              {/* Volume buttons — top edge */}
               <div className="absolute top-0 right-24 w-10 h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
               <div className="absolute top-0 right-36 w-8  h-[2px] rounded-b-sm" style={{ background: 'rgba(255,255,255,0.06)' }} aria-hidden="true" />
-              {/* Power button — right edge */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-12 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.07)' }} aria-hidden="true" />
 
-              {!activated && <ActivatePlaceholder onActivate={() => setActivated(true)} />}
-              {activated && !loaded && <LoadingSpinner />}
-              {activated && (
-                <iframe
-                  src={url}
-                  onLoad={() => setLoaded(true)}
-                  className="absolute inset-0 w-full h-full border-0"
-                  allow="fullscreen"
-                  title="BranchLab scenario player — mobile landscape view"
-                  style={{ borderRadius: 'inherit' }}
-                />
-              )}
+              {!activated
+                ? <ActivatePlaceholder onActivate={() => setActivated(true)} />
+                : <InlinePlayer scenarioId={scenarioId} accent={accent} />}
             </div>
             <div
               className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-full blur-3xl pointer-events-none"
@@ -389,9 +574,12 @@ function PhoneFrame({ pref, url }: { pref: boolean; url: string }) {
 }
 
 // ── Desktop mockup ────────────────────────────────────────────────────────
-function DesktopFrame({ pref, url, displayUrl }: { pref: boolean; url: string; displayUrl: string }) {
+function DesktopFrame({
+  pref, scenarioId, accent, displayUrl,
+}: {
+  pref: boolean; scenarioId: string; accent: Accent; displayUrl: string
+}) {
   const [activated, setActivated] = useState(false)
-  const [loaded, setLoaded] = useState(false)
 
   return (
     <motion.div
@@ -446,17 +634,9 @@ function DesktopFrame({ pref, url, displayUrl }: { pref: boolean; url: string; d
 
             {/* Content area */}
             <div className="relative" style={{ height: 360 }}>
-              {!activated && <ActivatePlaceholder onActivate={() => setActivated(true)} />}
-              {activated && !loaded && <LoadingSpinner />}
-              {activated && (
-                <iframe
-                  src={url}
-                  onLoad={() => setLoaded(true)}
-                  className="absolute inset-0 w-full h-full border-0"
-                  allow="fullscreen"
-                  title="BranchLab scenario player — desktop view"
-                />
-              )}
+              {!activated
+                ? <ActivatePlaceholder onActivate={() => setActivated(true)} />
+                : <InlinePlayer scenarioId={scenarioId} accent={accent} />}
             </div>
           </div>
           <div
