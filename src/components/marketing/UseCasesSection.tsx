@@ -1,33 +1,137 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useCases } from './marketing-data'
+import {
+  Users,
+  MessageCircle,
+  TrendingUp,
+  BookOpen,
+  Shield,
+  Film,
+  Lightbulb,
+  Layers,
+} from 'lucide-react'
+import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline'
 
-const accentMap = {
-  mint:   { color: 'oklch(82% 0.18 165)', border: 'oklch(82% 0.18 165 / 0.18)' },
-  violet: { color: 'oklch(78% 0.18 285)', border: 'oklch(78% 0.18 285 / 0.18)' },
-  amber:  { color: 'oklch(80% 0.16 60)',  border: 'oklch(80% 0.16 60 / 0.18)'  },
-  danger: { color: 'oklch(70% 0.18 25)',  border: 'oklch(70% 0.18 25 / 0.18)'  },
-}
+const useCaseTimelineData = [
+  {
+    id: 1,
+    title: 'Leadership',
+    date: 'Leadership & Mgmt',
+    content:
+      'Managers practice difficult decisions, team escalations, and judgment calls in realistic video-based situations.',
+    category: 'L&D',
+    icon: Users,
+    relatedIds: [5, 4],
+    status: 'completed' as const,
+    energy: 95,
+  },
+  {
+    id: 2,
+    title: 'Customer Service',
+    date: 'Customer Success',
+    content:
+      'Service teams build empathy and communication skills through branching customer interaction simulations.',
+    category: 'Customer Success',
+    icon: MessageCircle,
+    relatedIds: [3, 7],
+    status: 'in-progress' as const,
+    energy: 88,
+  },
+  {
+    id: 3,
+    title: 'Sales Training',
+    date: 'Revenue Teams',
+    content:
+      'Sales reps explore how different responses to objections lead to different outcomes in realistic scenarios.',
+    category: 'Revenue',
+    icon: TrendingUp,
+    relatedIds: [2, 1],
+    status: 'in-progress' as const,
+    energy: 82,
+  },
+  {
+    id: 4,
+    title: 'Onboarding',
+    date: 'HR & People Ops',
+    content:
+      'New employees navigate realistic workplace situations from day one — with immediate feedback on their choices.',
+    category: 'HR',
+    icon: BookOpen,
+    relatedIds: [8, 1],
+    status: 'completed' as const,
+    energy: 75,
+  },
+  {
+    id: 5,
+    title: 'Compliance',
+    date: 'Ethics & Risk',
+    content:
+      'Walk employees through realistic dilemmas where the right choice matters and the reasoning is clearly explained.',
+    category: 'Compliance',
+    icon: Shield,
+    relatedIds: [1, 4],
+    status: 'completed' as const,
+    energy: 90,
+  },
+  {
+    id: 6,
+    title: 'Storytelling',
+    date: 'Content & Media',
+    content:
+      'Creators build branching short films, social scenarios, and choose-your-own-adventure video stories.',
+    category: 'Creative',
+    icon: Film,
+    relatedIds: [7],
+    status: 'pending' as const,
+    energy: 68,
+  },
+  {
+    id: 7,
+    title: 'Workshops',
+    date: 'L&D Facilitation',
+    content:
+      'Facilitators use scenarios to reveal different perspectives and spark structured group conversations.',
+    category: 'L&D',
+    icon: Lightbulb,
+    relatedIds: [2, 6],
+    status: 'pending' as const,
+    energy: 78,
+  },
+  {
+    id: 8,
+    title: 'Product Training',
+    date: 'Product Enablement',
+    content:
+      'Train teams on features, procedures, and role-specific knowledge through interactive video paths.',
+    category: 'Enablement',
+    icon: Layers,
+    relatedIds: [4, 3],
+    status: 'completed' as const,
+    energy: 85,
+  },
+]
 
 export default function UseCasesSection() {
   return (
     <section
       id="use-cases"
-      className="relative py-32 overflow-hidden"
+      className="relative py-24 overflow-hidden"
       aria-labelledby="usecases-headline"
     >
+      {/* Background radial */}
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
         style={{
           background:
-            'radial-gradient(ellipse 600px 400px at 80% 50%, oklch(78% 0.18 285 / 0.04) 0%, transparent 55%)',
+            'radial-gradient(ellipse 700px 500px at 50% 50%, oklch(82% 0.18 165 / 0.04) 0%, transparent 60%)',
         }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="text-center max-w-xl mx-auto mb-16 space-y-4">
+        {/* Section header */}
+        <div className="text-center max-w-xl mx-auto mb-4 space-y-4">
           <motion.span
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -58,48 +162,20 @@ export default function UseCasesSection() {
             className="text-base"
             style={{ color: 'var(--fg-2)' }}
           >
-            BranchLab works wherever judgment, communication, or decision-making needs to be practiced.
+            BranchLab works wherever judgment, communication, or decision-making
+            needs to be practiced. Click any node to explore.
           </motion.p>
         </div>
 
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          role="list"
-          aria-label="Use cases"
+        {/* Orbital timeline */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {useCases.slice(0, 6).map((uc, i) => {
-            const accent = accentMap[uc.accent]
-            return (
-              <motion.div
-                key={uc.id}
-                role="listitem"
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
-                className="relative p-7 rounded-2xl border flex flex-col gap-4"
-                style={{
-                  background: 'rgba(12,14,20,0.5)',
-                  borderColor: accent.border,
-                  backdropFilter: 'blur(12px)',
-                }}
-              >
-                {/* Accent dot */}
-                <div
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ background: accent.color }}
-                />
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">{uc.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--fg-3)' }}>
-                    {uc.description}
-                  </p>
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
+          <RadialOrbitalTimeline timelineData={useCaseTimelineData} />
+        </motion.div>
       </div>
     </section>
   )
