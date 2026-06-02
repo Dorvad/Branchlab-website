@@ -33,6 +33,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
   const [autoRotate, setAutoRotate] = useState<boolean>(true)
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({})
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null)
+  const [orbitalScale, setOrbitalScale] = useState<number>(1)
   const containerRef = useRef<HTMLDivElement>(null)
   const orbitRef = useRef<HTMLDivElement>(null)
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({})
@@ -82,6 +83,18 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
     return () => { if (timer) clearInterval(timer) }
   }, [autoRotate])
 
+  // Scale the orbital down on narrow screens so nodes never clip.
+  // 520 = 2 × (radius 200 + node 40 + label overhang ~20)
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const update = () => setOrbitalScale(Math.min(1, el.clientWidth / 520))
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   const centerViewOnNode = (nodeId: number) => {
     if (!nodeRefs.current[nodeId]) return
     const nodeIndex = timelineData.findIndex((item) => item.id === nodeId)
@@ -124,7 +137,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
   return (
     <div
       className="w-full flex flex-col items-center justify-center overflow-hidden"
-      style={{ height: 600 }}
+      style={{ height: Math.max(360, 600 * orbitalScale) }}
       ref={containerRef}
       onClick={handleContainerClick}
     >
@@ -132,7 +145,11 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
         <div
           className="absolute w-full h-full flex items-center justify-center"
           ref={orbitRef}
-          style={{ perspective: "1000px" }}
+          style={{
+            perspective: "1000px",
+            transform: `scale(${orbitalScale})`,
+            transformOrigin: "center center",
+          }}
         >
           {/* Center orb — mint brand gradient */}
           <div
