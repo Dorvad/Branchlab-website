@@ -5,6 +5,7 @@ import CanvasSection from '@/components/marketing/CanvasSection'
 import PlayerShowcase from '@/components/marketing/PlayerShowcase'
 import UseCasesSection from '@/components/marketing/UseCasesSection'
 import AnalyticsSection from '@/components/marketing/AnalyticsSection'
+import UpcomingFeaturesSection from '@/components/marketing/UpcomingFeaturesSection'
 import CTASection from '@/components/marketing/CTASection'
 import Footer from '@/components/marketing/Footer'
 
@@ -39,6 +40,7 @@ export default function MarketingPage() {
         <PlayerShowcase />
         <UseCasesSection />
         <AnalyticsSection />
+        <UpcomingFeaturesSection />
         <CTASection />
       </main>
       <Footer />
