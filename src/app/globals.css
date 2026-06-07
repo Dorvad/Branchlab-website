@@ -123,6 +123,27 @@ select.inspector-input option {
   border-radius: 6px;
 }
 
+/* ── Skip-to-content link — visually hidden until focused ────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 10px 10px;
+  background: oklch(82% 0.18 165);
+  color: #052916;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #052916;
+  outline-offset: -4px;
+}
+
 /* Inspector inputs have a visible border change on focus — suppress duplicate outline */
 .inspector-input:focus-visible {
   outline: none;

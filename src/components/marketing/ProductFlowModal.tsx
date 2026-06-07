@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -53,6 +53,8 @@ interface Props {
 
 export default function ProductFlowModal({ open, onClose }: Props) {
   const [{ step, dir }, setState] = useState({ step: 0, dir: 1 })
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   function goTo(i: number) {
     setState(s => ({ step: i, dir: i > s.step ? 1 : -1 }))
@@ -60,6 +62,25 @@ export default function ProductFlowModal({ open, onClose }: Props) {
 
   useEffect(() => {
     if (open) setState({ step: 0, dir: 1 })
+  }, [open])
+
+  // Save the previously focused element and move focus into the dialog on open;
+  // restore focus to the trigger when the dialog closes.
+  useEffect(() => {
+    if (open) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null
+      const id = window.setTimeout(() => {
+        const node = dialogRef.current
+        if (!node) return
+        const focusable = node.querySelector<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        ;(focusable ?? node).focus()
+      }, 0)
+      return () => window.clearTimeout(id)
+    }
+    previousFocusRef.current?.focus()
+    previousFocusRef.current = null
   }, [open])
 
   useEffect(() => {
@@ -71,6 +92,25 @@ export default function ProductFlowModal({ open, onClose }: Props) {
       }
       if (e.key === 'ArrowLeft') {
         setState(s => s.step > 0 ? { step: s.step - 1, dir: -1 } : s)
+      }
+      if (e.key === 'Tab') {
+        const node = dialogRef.current
+        if (!node) return
+        const focusable = Array.from(
+          node.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter(el => el.offsetParent !== null)
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
       }
     }
     window.addEventListener('keydown', handler)
@@ -103,6 +143,11 @@ export default function ProductFlowModal({ open, onClose }: Props) {
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 pointer-events-none">
             <motion.div
               key="modal-card"
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-headline"
+              tabIndex={-1}
               initial={{ opacity: 0, y: 48, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 32, scale: 0.97 }}
@@ -203,7 +248,7 @@ export default function ProductFlowModal({ open, onClose }: Props) {
                     >
                       {current.label}
                     </p>
-                    <h3 className="text-xl sm:text-2xl font-semibold tracking-[-0.02em] leading-[1.2]">
+                    <h3 id="modal-headline" className="text-xl sm:text-2xl font-semibold tracking-[-0.02em] leading-[1.2]">
                       {current.headline}
                     </h3>
                     <p className="text-sm leading-relaxed" style={{ color: 'var(--fg-3)' }}>

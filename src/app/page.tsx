@@ -33,7 +33,7 @@ export default function MarketingPage() {
       style={{ background: 'var(--bg-0)', color: 'var(--fg-0)' }}
     >
       <MarketingHeader />
-      <main>
+      <main id="main-content">
         <HeroSection />
         <CanvasSection />
         <PlayerShowcase />

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { APP_URL } from './marketing-data'
+import { openConsentPreferences } from '@/lib/consent'
 
 const footerLinks = {
   Product: [
@@ -19,6 +20,7 @@ const footerLinks = {
     { label: 'Terms of service', href: '/terms' },
     { label: 'Privacy policy', href: '/privacy' },
     { label: 'Accessibility', href: '/accessibility' },
+    { label: 'Cookie preferences', href: null },
   ],
 }
 
@@ -70,15 +72,28 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm transition-colors"
-                      style={{ color: 'var(--fg-3)' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--fg-1)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--fg-3)')}
-                    >
-                      {link.label}
-                    </Link>
+                    {link.href ? (
+                      <Link
+                        href={link.href}
+                        className="text-sm transition-colors"
+                        style={{ color: 'var(--fg-3)' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--fg-1)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--fg-3)')}
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={openConsentPreferences}
+                        className="text-sm text-left transition-colors"
+                        style={{ color: 'var(--fg-3)' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--fg-1)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--fg-3)')}
+                      >
+                        {link.label}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
