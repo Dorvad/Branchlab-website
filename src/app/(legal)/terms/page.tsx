@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import LegalPage from '@/components/marketing/LegalPage'
 
 export const metadata: Metadata = {
@@ -157,7 +158,7 @@ export default function TermsPage() {
       <Section title="8. Privacy">
         <p>
           Your use of the service is also governed by our{' '}
-          <a href="/privacy">Privacy Policy</a>, which is incorporated into these Terms by reference.
+          <Link href="/privacy">Privacy Policy</Link>, which is incorporated into these Terms by reference.
           By using the service you acknowledge you have read and understood the Privacy Policy.
         </p>
       </Section>

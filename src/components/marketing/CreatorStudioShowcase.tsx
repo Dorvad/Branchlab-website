@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GitBranch, Layers, CheckCircle2, Eye } from 'lucide-react'
 import { GlowCard } from '@/components/ui/spotlight-card'
@@ -86,9 +87,11 @@ export default function CreatorStudioShowcase() {
           transition={{ duration: 0.6 }}
         >
           <GlowCard glowColor="mint" customSize className="w-full">
-            <img
+            <Image
               src="/creator-studio.jpg"
               alt="BranchLab Creator Studio — visual node graph editor showing a branching scenario with connected video scenes and an asset library panel"
+              width={2960}
+              height={1765}
               className="w-full h-auto block"
               draggable={false}
             />

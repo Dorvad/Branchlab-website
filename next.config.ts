@@ -47,7 +47,24 @@ const securityHeaders = [
   },
 ]
 
+// Subpath deployment support — this app is ALSO served at
+// https://branchlab.online/marketing via a Vercel rewrite in the separate
+// "BranchLab app" repo (proxying /marketing and /marketing/:path* to this
+// deployment's root). basePath/assetPrefix are baked into the build: every
+// generated <script>/<link>/<Image>/<Link> URL gets this prefix, so a
+// *single* build can serve correctly at its own root (branchlab-website.vercel.app)
+// OR under /marketing, but not both — whichever basePath is compiled in is
+// the only one that works for that deployment.
+//
+// NEXT_PUBLIC_BASE_PATH lets each Vercel deployment opt in independently:
+// leave it unset on the deployment serving the standalone root domain, and
+// set it to "/marketing" on the (separate) deployment that backs the
+// /marketing proxy. Don't set it globally — that would break the root domain.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
 const nextConfig: NextConfig = {
+  ...(basePath ? { basePath, assetPrefix: basePath } : {}),
+
   // FFmpeg.wasm uses browser APIs — exclude from server-side bundle
   serverExternalPackages: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
 
