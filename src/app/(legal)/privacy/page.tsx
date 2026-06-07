@@ -25,8 +25,8 @@ export default function PrivacyPage() {
           The controller of your personal data is:
         </p>
         <AddressBlock
-          name="[COMPANY_LEGAL_NAME]"
-          address="[REGISTERED_ADDRESS, CITY, ISRAEL]"
+          name="Branchlab"
+          address="Jerusalem Boulevard 107, Tel Aviv-Yafo, Israel 6818365"
           registration="Company No. [REGISTRATION_NUMBER]"
           email="privacy@branchlab.app"
         />
@@ -253,8 +253,8 @@ export default function PrivacyPage() {
           For any questions about this policy or to exercise your rights:
         </p>
         <AddressBlock
-          name="[COMPANY_LEGAL_NAME] — Privacy"
-          address="[ADDRESS]"
+          name="Branchlab — Privacy"
+          address="Jerusalem Boulevard 107, Tel Aviv-Yafo, Israel 6818365"
           email="privacy@branchlab.app"
         />
         <p className="mt-4 text-sm" style={{ color: 'var(--fg-4)', fontStyle: 'italic' }}>

@@ -17,7 +17,7 @@ export default function TermsPage() {
       eyebrow="Legal"
       title="Terms of Service"
       lastUpdated="May 2026"
-      intro={`These Terms of Service ("Terms") govern your access to and use of the BranchLab website (branchlab.app) and application service (app.branchlab.app, branchlab.online) operated by [COMPANY_LEGAL_NAME], a company registered in Israel ("BranchLab", "we", "us", "our"). By accessing or using the service you agree to be bound by these Terms. If you do not agree, do not use the service.`}
+      intro={`These Terms of Service ("Terms") govern your access to and use of the BranchLab website (branchlab.app) and application service (app.branchlab.app, branchlab.online) operated by Branchlab, a company registered in Israel ("BranchLab", "we", "us", "our"). By accessing or using the service you agree to be bound by these Terms. If you do not agree, do not use the service.`}
     >
 
       <Section title="1. The Service">
@@ -297,8 +297,8 @@ export default function TermsPage() {
       <Section title="18. Contact">
         <p>For legal notices or questions about these Terms:</p>
         <AddressBlock
-          name="[COMPANY_LEGAL_NAME] — Legal"
-          address="[ADDRESS, CITY, ISRAEL]"
+          name="Branchlab — Legal"
+          address="Jerusalem Boulevard 107, Tel Aviv-Yafo, Israel 6818365"
           email="legal@branchlab.app"
         />
         <p className="mt-4 text-sm" style={{ color: 'var(--fg-4)', fontStyle: 'italic' }}>

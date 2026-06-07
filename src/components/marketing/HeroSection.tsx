@@ -6,6 +6,10 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 import type { MotionValue } from 'framer-motion'
 import { ArrowRight, Play } from 'lucide-react'
 import { featurePills } from './marketing-data'
+import InteractiveDotField from './InteractiveDotField'
+import RotatingText from '@/components/ui/rotating-text'
+
+const HERO_ROTATING_WORDS = ['branching', 'interactive', 'live', 'unique', 'immersive']
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -47,8 +51,10 @@ export default function HeroSection() {
           `,
         }}
       />
-      {/* Dot grid */}
-      <div className="pointer-events-none absolute inset-0 mkt-dot-grid opacity-40" aria-hidden="true" />
+      {/* Interactive dot field — brightens near the cursor */}
+      <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true">
+        <InteractiveDotField reduced={!!prefersReducedMotion} />
+      </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 pt-28 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
         {/* Left — copy */}
@@ -85,21 +91,14 @@ export default function HeroSection() {
             className="text-[52px] sm:text-[64px] font-semibold leading-[0.95] tracking-[-0.03em]"
           >
             Turn video clips into{' '}
-            <motion.span
-              className="not-italic font-medium"
+            <RotatingText
+              texts={HERO_ROTATING_WORDS}
+              className="font-medium"
               style={{
-                background: 'linear-gradient(90deg, oklch(60% 0.18 165), oklch(82% 0.18 165), #e8fff6, oklch(82% 0.18 165), oklch(60% 0.18 165))',
-                backgroundSize: '200% auto',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                color: 'var(--neon-mint)',
+                filter: 'drop-shadow(0 0 18px oklch(82% 0.18 165 / 0.35))',
               }}
-              initial={{ backgroundPosition: '0% 0' }}
-              animate={{ backgroundPosition: '200% 0' }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            >
-              branching
-            </motion.span>{' '}
+            />{' '}
             simulations.
           </motion.h1>
 

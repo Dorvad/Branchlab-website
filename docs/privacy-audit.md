@@ -68,7 +68,7 @@ Because no personal data is collected by this site, there is currently no subjec
 
 ## 8. Required follow-up (owner / legal review)
 
-- [ ] **Have `/privacy` and `/terms` reviewed by a qualified Israeli attorney** and replace every `[PLACEHOLDER]` (`[COMPANY_LEGAL_NAME]`, `[REGISTERED_ADDRESS...]`, `[REGISTRATION_NUMBER]`, `[DATABASE_NAME_IF_REGISTERED]`, `[DB_REG_NUMBER]`) — these pages currently carry an `ACTION REQUIRED` comment block flagging this
+- [ ] **Have `/privacy` and `/terms` reviewed by a qualified Israeli attorney** and replace the remaining `[PLACEHOLDER]`s (`[REGISTRATION_NUMBER]`, `[DATABASE_NAME_IF_REGISTERED]`, `[DB_REG_NUMBER]`) — `[COMPANY_LEGAL_NAME]` and the registered address have been filled in (Branchlab, Jerusalem Boulevard 107, Tel Aviv-Yafo, Israel 6818365), but legal review of the full pages is still required
 - [ ] Confirm whether the company needs to **register a database** with the Israeli Registrar of Databases under Amendment 13's expanded criteria — this depends on facts about the business (e.g. whether/when the BranchLab app reaches the data-volume thresholds), not on this marketing site
 - [ ] Decide whether Vercel's platform-level access logs (IP addresses, request metadata — outside this codebase, configured in the Vercel dashboard) constitute "personal data" requiring disclosure in the privacy policy, and document the retention period Vercel applies
 - [ ] When any analytics/marketing/embed script is added in the future: gate it behind `hasConsent()` from `src/lib/consent.ts` **before** merging, and add a row to the data table in `docs/data-retention.md`
