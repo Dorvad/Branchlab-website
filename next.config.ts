@@ -1,22 +1,27 @@
 import type { NextConfig } from 'next'
 
 // Content-Security-Policy: this is a static marketing site with no analytics,
-// ads, or third-party trackers. Everything (scripts, styles, fonts, images)
-// is self-hosted, so the policy stays tight. 'unsafe-inline' is required for
-// script-src (the anti-flash theme-setter in the document head and Next.js's
-// streaming hydration scripts) and style-src (Tailwind/Framer Motion inline
-// `style` attributes) since the project does not wire up CSP nonces.
+// ads, or third-party trackers. Everything is self-hosted except the
+// PlayerShowcase "Try it" demo videos/thumbnails, which stream from the
+// Supabase storage bucket below — that origin is allowlisted in img-src and
+// media-src so the inline player can load them. 'unsafe-inline' is required
+// for script-src (the anti-flash theme-setter in the document head and
+// Next.js's streaming hydration scripts) and style-src (Tailwind/Framer
+// Motion inline `style` attributes) since the project does not wire up CSP
+// nonces.
 //
 // 'unsafe-eval' is added only in development: `next dev`'s Fast Refresh /
 // eval-based source maps call eval() to wrap modules, and a strict
 // script-src blocks that with "Refused to evaluate a string as JavaScript".
 // Production builds don't use eval, so the prod policy stays strict.
 const isDev = process.env.NODE_ENV !== 'production'
+const SUPABASE_ASSETS = 'https://intzkjqmxrlfcbqjlaoj.supabase.co'
 const CSP = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob: ${SUPABASE_ASSETS}`,
+  `media-src 'self' ${SUPABASE_ASSETS}`,
   "font-src 'self' data:",
   "connect-src 'self'",
   "frame-src 'self'",

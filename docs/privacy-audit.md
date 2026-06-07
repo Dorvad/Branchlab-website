@@ -56,6 +56,8 @@ No third-party JavaScript, web fonts loaded at runtime, analytics beacons, or em
 
 The `/accessibility` page references an "embedded scenario player" (`branchlab.online/play/*`) as a third-party iframe — that player is part of the separate BranchLab app codebase, not this repo, and is out of scope for this audit.
 
+**Update (hero "Try it" demo):** `PlayerShowcase.tsx` streams its inline demo videos and poster thumbnails directly from a Supabase storage bucket (`https://intzkjqmxrlfcbqjlaoj.supabase.co/storage/v1/object/public/Assets/...`). This is passive media (no script execution, no data sent about the visitor beyond the standard HTTP request for the asset) and carries no personal data, but it is a third-party origin and is allowlisted in `img-src`/`media-src` in the CSP (`next.config.ts`). Noting it here so the inventory stays accurate — no consent gating is needed since it's not tracking/analytics, but it should be documented if its retention/hosting changes.
+
 ## 6. User rights mechanism
 
 Because no personal data is collected by this site, there is currently no subject-access/erasure mechanism to build here. The existing `/privacy` policy already directs data-subject requests to a contact address (`[PLACEHOLDER]` pending the owner filling in real company details — see `docs/data-retention.md` and the page's `ACTION REQUIRED` comment). That mechanism is correctly the responsibility of whichever system *does* hold the data — i.e. the BranchLab app, when a visitor signs up there.
